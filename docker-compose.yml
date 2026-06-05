@@ -1,0 +1,15 @@
+services:
+  test-server:
+    build: .
+    command: sh -c "./scripts/generate-cert.sh && python -m server.https_server --host 0.0.0.0 --port 8443"
+    ports:
+      - "8443:8443"
+  policy-proxy:
+    build: .
+    command: python -m proxy.main --listen-host 0.0.0.0 --listen-port 9443 --policy configs/policy.docker.yaml
+    depends_on:
+      - test-server
+    ports:
+      - "9443:9443"
+    volumes:
+      - ./logs:/app/logs

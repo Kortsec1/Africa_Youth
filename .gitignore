@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+logs/*.jsonl
+logs/*.log
+captures/*.pcap
+captures/*.pcapng
+server/certs/server.crt
+server/certs/server.key
+.DS_Store

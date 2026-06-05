@@ -1,0 +1,21 @@
+# 핵심 개념
+
+## HTTP와 HTTPS
+
+HTTP는 웹 요청과 응답을 평문으로 주고받는 프로토콜이다. HTTPS는 HTTP를 TLS 위에서 전송해 중간에서 내용을 읽거나 바꾸기 어렵게 만든다.
+
+## TLS 역할과 Handshake
+
+TLS는 서버 인증, 암호화 키 합의, 통신 무결성 보호를 담당한다. Handshake는 실제 애플리케이션 데이터 전송 전에 암호화 방식과 키를 정하는 절차다.
+
+## ClientHello와 SNI
+
+ClientHello는 클라이언트가 처음 보내는 TLS Handshake 메시지다. 지원 TLS 버전, 암호군, 확장 정보가 들어간다. SNI는 하나의 IP 주소에서 여러 도메인을 서비스할 수 있도록 클라이언트가 접속하려는 서버 이름을 알려주는 확장이다.
+
+## SNI 기반 정책 적용
+
+일반적인 ECH 미적용 환경에서 SNI는 ClientHello extension에 위치할 수 있다. 중간 정책 장비는 TLS 내용을 복호화하지 않고도 ClientHello의 SNI만 확인해 도메인 기반 allow/block 결정을 내릴 수 있다.
+
+## 한계와 ECH
+
+SNI 기반 필터링은 도메인 단위 정책에는 단순하지만, HTTP 경로나 본문 내용은 볼 수 없다. SNI가 없거나 위조되거나 ECH가 적용되면 대상 도메인 식별이 제한된다. ECH는 ClientHello의 민감한 확장 정보를 암호화해 관찰 가능한 SNI 기반 정책의 효용을 줄인다.
