@@ -51,6 +51,63 @@ captures/             tcpdump/Wireshark 캡처 파일 보관 위치
 - Docker 및 Docker Compose 선택 사항
 - tcpdump/Wireshark 선택 사항
 
+## 로컬 실행 빠른 시작
+
+처음 실행하거나 새 터미널을 열었을 때는 아래 순서대로 실행합니다.
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+./scripts/generate-cert.sh
+```
+
+터미널 1에서 HTTPS 테스트 서버를 실행합니다.
+
+```bash
+python -m server.https_server
+```
+
+터미널 2에서 정책 프록시를 실행합니다.
+
+```bash
+python -m proxy.main
+```
+
+터미널 3에서 허용, 차단, 알 수 없는 SNI 테스트를 실행합니다.
+
+```bash
+./scripts/test-allowed.sh
+./scripts/test-blocked.sh
+./scripts/test-unknown.sh
+```
+
+로그는 다음 명령으로 확인합니다.
+
+```bash
+tail -n 20 logs/proxy.jsonl
+```
+
+전체 테스트는 다음 명령으로 실행합니다.
+
+```bash
+python -m pytest
+```
+
+포트가 이미 사용 중이면 점유 프로세스를 확인합니다.
+
+```bash
+lsof -nP -iTCP:8443 -sTCP:LISTEN
+lsof -nP -iTCP:9443 -sTCP:LISTEN
+```
+
+다른 포트를 쓰려면 서버 포트, 프록시 포트, 정책 파일의 `upstream.port`, curl 테스트 포트를 함께 맞춰야 합니다.
+
+```bash
+python -m server.https_server --port 18443
+python -m proxy.main --listen-port 19443
+```
+
 ## Python 환경 설정
 
 ```bash
@@ -88,9 +145,9 @@ python -m proxy.main --listen-host 127.0.0.1 --listen-port 9443 --policy configs
 터미널 3:
 
 ```bash
-curl -vk --resolve allowed.test:9443:127.0.0.1 https://allowed.test:9443/
-curl -vk --resolve blocked.test:9443:127.0.0.1 https://blocked.test:9443/
-curl -vk --resolve unknown.test:9443:127.0.0.1 https://unknown.test:9443/
+./scripts/test-allowed.sh
+./scripts/test-blocked.sh
+./scripts/test-unknown.sh
 ```
 
 `allowed.test`는 JSON 응답을 받아야 하고, `blocked.test`와 `unknown.test`는 정책에 따라 연결이 종료되어야 합니다.
