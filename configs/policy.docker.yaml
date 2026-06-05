@@ -1,0 +1,11 @@
+default_action: block
+upstream:
+  host: test-server
+  port: 8443
+rules:
+  - sni: allowed.test
+    action: allow
+    reason: 허용된 로컬 Docker 테스트 도메인
+  - sni: blocked.test
+    action: block
+    reason: 차단 동작 확인용 로컬 테스트 도메인
