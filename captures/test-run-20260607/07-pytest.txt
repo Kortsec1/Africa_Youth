@@ -1,0 +1,10 @@
+
+==================================== ERRORS ====================================
+__________________ ERROR collecting tests/test_sni_parser.py ___________________
+tests/test_sni_parser.py:6: in <module>
+    def build_client_hello(server_name: str | None = "allowed.test") -> bytes:
+E   TypeError: unsupported operand type(s) for |: 'type' and 'NoneType'
+=========================== short test summary info ============================
+ERROR tests/test_sni_parser.py - TypeError: unsupported operand type(s) for |...
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.08s
