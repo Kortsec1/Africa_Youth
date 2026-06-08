@@ -1,0 +1,13 @@
+* Added unknown.test:9443:127.0.0.1 to DNS cache
+* Hostname unknown.test was found in DNS cache
+*   Trying 127.0.0.1:9443...
+* ALPN: curl offers h2,http/1.1
+} [5 bytes data]
+* TLSv1.3 (OUT), TLS handshake, Client hello (1):
+} [1558 bytes data]
+* TLSv1.3 (OUT), TLS alert, decode error (562):
+} [2 bytes data]
+* TLS connect error: error:0A000126:SSL routines::unexpected eof while reading
+* closing connection #0
+
+EXIT_CODE=35

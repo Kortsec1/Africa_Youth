@@ -1,0 +1,14 @@
+COMMAND:
+sudo -n tcpdump -i lo0 port 9443 -w captures/tls-local-test.pcap
+
+RESULT:
+Failed.
+
+ERROR:
+sudo: a password is required
+
+NOTE:
+The Codex non-interactive execution environment cannot enter the macOS sudo password.
+Manual packet capture can be run from a local terminal with:
+
+sudo tcpdump -i lo0 port 9443 -w captures/tls-local-test.pcap

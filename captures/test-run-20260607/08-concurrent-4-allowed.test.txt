@@ -1,0 +1,53 @@
+* Added allowed.test:9443:127.0.0.1 to DNS cache
+* Hostname allowed.test was found in DNS cache
+*   Trying 127.0.0.1:9443...
+* ALPN: curl offers h2,http/1.1
+} [5 bytes data]
+* TLSv1.3 (OUT), TLS handshake, Client hello (1):
+} [1558 bytes data]
+* TLSv1.3 (IN), TLS handshake, Server hello (2):
+{ [91 bytes data]
+* TLSv1.2 (IN), TLS handshake, Certificate (11):
+{ [775 bytes data]
+* TLSv1.2 (IN), TLS handshake, Server key exchange (12):
+{ [300 bytes data]
+* TLSv1.2 (IN), TLS handshake, Server finished (14):
+{ [4 bytes data]
+* TLSv1.2 (OUT), TLS handshake, Client key exchange (16):
+} [37 bytes data]
+* TLSv1.2 (OUT), TLS change cipher, Change cipher spec (1):
+} [1 bytes data]
+* TLSv1.2 (OUT), TLS handshake, Finished (20):
+} [16 bytes data]
+* TLSv1.2 (IN), TLS handshake, Finished (20):
+{ [16 bytes data]
+* SSL connection using TLSv1.2 / ECDHE-RSA-CHACHA20-POLY1305 / X25519 / rsaEncryption
+* ALPN: server did not agree on a protocol. Uses default.
+* Server certificate:
+*  subject: CN=allowed.test
+*  start date: Jun  7 12:21:12 2026 GMT
+*  expire date: Jun  7 12:21:12 2027 GMT
+*  issuer: CN=allowed.test
+*  SSL certificate verify result: self-signed certificate (18), continuing anyway.
+*   Certificate level 0: Public key type RSA (2048/112 Bits/secBits), signed using sha256WithRSAEncryption
+* Established connection to allowed.test (127.0.0.1 port 9443) from 127.0.0.1 port 50839 
+* using HTTP/1.x
+} [5 bytes data]
+> GET / HTTP/1.1
+> Host: allowed.test:9443
+> User-Agent: curl/8.16.0
+> Accept: */*
+> 
+* Request completely sent off
+{ [5 bytes data]
+* HTTP 1.0, assume close after body
+< HTTP/1.0 200 OK
+< Server: LocalTLSTestServer/0.1 Python/3.9.6
+< Date: Sun, 07 Jun 2026 13:37:01 GMT
+< Content-Type: application/json; charset=utf-8
+< Content-Length: 101
+< 
+{ [5 bytes data]
+* shutting down connection #0
+{"status": "ok", "message": "Local TLS test server", "timestamp": "2026-06-07T13:37:01.616527+00:00"}
+EXIT_CODE=0
