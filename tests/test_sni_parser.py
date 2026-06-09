@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pytest
 
 from proxy.sni_parser import ClientHelloParseError, extract_sni

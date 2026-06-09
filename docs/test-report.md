@@ -18,7 +18,7 @@
 | --- | --- |
 | 실행 날짜 | 2026-06-07 |
 | 실행 경로 | `/Users/handonghun/capstonedesign` |
-| 대상 커밋 | `ffb7bd0` |
+| 대상 커밋 | `e186364` 기준 수동 결과, 2026-06-09 점검 보완 포함 |
 | OS | macOS |
 | Python | `.venv/bin/python` 3.9.6 |
 | curl | 8.16.0 |
@@ -26,7 +26,7 @@
 | 정책 프록시 주소 | `127.0.0.1:9443` |
 | 테스트 HTTPS 서버 주소 | `127.0.0.1:8443` |
 
-프로젝트 문서상 권장 Python 버전은 3.11 이상이지만, 실제 실행 환경의 가상환경은 Python 3.9.6이었다. 수동 시나리오 실행에는 문제가 없었으나, pytest는 타입 표기 호환성 문제로 수집 단계에서 실패했다.
+실제 실행 환경의 가상환경은 Python 3.9.6이다. 2026-06-07 수동 시나리오 실행에는 문제가 없었고, 2026-06-09 점검에서 테스트 타입 표기 호환성을 보완한 뒤 pytest 전체 통과를 확인했다.
 
 ## 3. 테스트 대상 구조
 
@@ -81,7 +81,7 @@ Test HTTPS Server
 | 4 | SNI 없는 연결 | `openssl s_client -connect 127.0.0.1:9443 < /dev/null` | SNI 없음으로 차단 | `extracted_sni=null`, `decision=block` | 성공 |
 | 5 | 비정상 ClientHello | `printf "not tls client hello" \| nc 127.0.0.1 9443` | 파싱 실패 후 차단 | `error=not a TLS handshake record`, `decision=block` | 성공 |
 | 6 | 테스트 서버 장애 | 서버 종료 후 `allowed.test` 요청 | 정책은 허용, 업스트림 오류 기록 | `decision=allow`, 연결 실패 오류 기록 | 성공 |
-| 7 | pytest 통합 테스트 | `.venv/bin/python -m pytest -q` | 통합 테스트 통과 | Python 3.9 타입 표기 문제로 수집 실패 | 환경 이슈 |
+| 7 | pytest 통합 테스트 | `.venv/bin/python -m pytest -q` | 통합 테스트 통과 | 12개 테스트 통과 | 성공 |
 | 8 | 동시 연결 | 5개 요청 병렬 실행 | 각 SNI별 독립 처리 | 허용 2건, 차단 3건 모두 정책대로 처리 | 성공 |
 
 ## 6. 주요 로그 분석
@@ -170,21 +170,21 @@ error=[Errno 61] Connect call failed ('127.0.0.1', 8443)
 
 동시 요청에서도 허용 요청은 HTTP 200 응답을 받았고, 차단 요청은 업스트림으로 전달되지 않았다. 이를 통해 비동기 기반 프록시가 여러 연결을 동시에 처리하면서도 정책 결정을 독립적으로 수행함을 확인했다.
 
-## 7. pytest 결과 및 환경 이슈
+## 7. pytest 결과
 
-pytest 실행 결과는 실패로 기록되었다.
+2026-06-09 점검에서 pytest를 재실행한 결과 전체 테스트가 통과했다.
 
 ```text
-TypeError: unsupported operand type(s) for |: 'type' and 'NoneType'
+12 passed in 1.73s
 ```
 
-실패 원인은 테스트 코드의 `str | None` 타입 표기가 Python 3.10 이상에서 지원되는 문법인데, 현재 가상환경이 Python 3.9.6이기 때문이다. 프로젝트 요구사항은 Python 3.11 이상이므로, 이는 기능 오류라기보다 실행 환경 불일치로 보는 것이 타당하다.
-
-향후 Python 3.11 이상 환경에서 다음 명령을 재실행해야 한다.
+실행 명령:
 
 ```bash
-python -m pytest -q
+.venv/bin/python -m pytest -q
 ```
+
+참고로 샌드박스 내부에서는 로컬 포트 바인딩 권한 제한으로 통합 테스트가 `PermissionError`를 낼 수 있다. 이 경우 샌드박스 밖 또는 로컬 포트 바인딩이 허용된 환경에서 실행해야 한다.
 
 ## 8. 패킷 캡처 결과
 
@@ -221,7 +221,7 @@ sudo tcpdump -i lo0 port 9443 -w captures/tls-local-test.pcap
 
 제한 사항은 다음과 같다.
 
-- Python 3.11 이상 환경이 없어 pytest 자동 통합 테스트는 완료하지 못했다.
+- 샌드박스 내부에서는 로컬 포트 바인딩 권한 제한으로 통합 테스트가 실패할 수 있다.
 - sudo 권한 입력이 필요한 tcpdump pcap 캡처는 비대화형 환경에서 수행하지 못했다.
 - 실험은 로컬 테스트 도메인과 로컬 업스트림 서버에 한정되므로 실제 인터넷 트래픽 차단 성능을 평가하는 실험은 아니다.
 
@@ -229,4 +229,4 @@ sudo tcpdump -i lo0 port 9443 -w captures/tls-local-test.pcap
 
 수동 시나리오와 프록시 로그 분석 결과, 본 TLS/SNI 필터링 테스트베드는 로컬 환경에서 SNI 기반 allow/block 정책을 의도대로 수행했다. 특히 허용, 차단, 기본 차단, 비정상 입력, 업스트림 장애, 동시 연결 상황이 모두 로그로 확인되었으므로, 교육 및 구조 분석 목적의 테스트베드로서 핵심 기능은 정상 동작한다고 판단된다.
 
-다만 최종 검증 완성도를 높이기 위해서는 Python 3.11 이상 환경에서 pytest를 재실행하고, 로컬 터미널에서 sudo 권한으로 tcpdump pcap 캡처를 추가 수행하는 것이 필요하다.
+다만 최종 검증 완성도를 높이기 위해서는 로컬 터미널에서 sudo 권한으로 tcpdump pcap 캡처를 추가 수행하는 것이 필요하다.

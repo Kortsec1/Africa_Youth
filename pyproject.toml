@@ -2,7 +2,7 @@
 name = "tls-filtering-testbed"
 version = "0.1.0"
 description = "Closed local TLS SNI policy proxy testbed"
-requires-python = ">=3.11"
+requires-python = ">=3.9"
 dependencies = ["PyYAML>=6.0.1"]
 
 [project.optional-dependencies]

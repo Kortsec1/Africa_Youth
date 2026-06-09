@@ -2,7 +2,7 @@
 
 ## 준비
 
-macOS와 Linux 모두 Python 3.11 이상, OpenSSL, curl이 필요하다. Docker Compose는 선택 사항이다.
+macOS와 Linux 모두 Python 3.9 이상, OpenSSL, curl이 필요하다. Docker Compose는 선택 사항이다.
 
 ## Python 실행
 

@@ -65,7 +65,7 @@ captures/     tcpdump/Wireshark 캡처 파일 보관 위치
 
 ## 준비 사항
 
-- Python 3.11 이상
+- Python 3.9 이상
 - OpenSSL
 - curl
 - Docker 및 Docker Compose 선택 사항
