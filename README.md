@@ -275,6 +275,7 @@ python -m proxy.main --listen-port 19443
 - [개념 정리](docs/concepts.md)
 - [SNI 기반 필터링 우회·회피 기법 분석](docs/filtering-evasion-analysis.md)
 - [현대 인터넷 검열 방식과 우회 기법 개요](docs/modern-censorship-and-circumvention-overview.md)
+- [최종 보고서용 구현 확장 묶음](docs/final-report-implementation-bundle.md)
 - [아키텍처](docs/architecture.md)
 - [Wireshark 가이드](docs/wireshark-guide.md)
 - [테스트 시나리오](docs/test-scenarios.md)

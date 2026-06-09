@@ -1,6 +1,6 @@
 import pytest
 
-from proxy.sni_parser import ClientHelloParseError, extract_sni
+from proxy.sni_parser import ClientHelloParseError, extract_sni, parse_client_hello
 
 
 def build_client_hello(server_name: str | None = "allowed.test") -> bytes:
@@ -25,6 +25,16 @@ def build_client_hello(server_name: str | None = "allowed.test") -> bytes:
 
 def test_extract_sni_from_client_hello():
     assert extract_sni(build_client_hello("Allowed.Test")) == "allowed.test"
+
+
+def test_parse_client_hello_metadata():
+    metadata = parse_client_hello(build_client_hello("allowed.test"))
+    assert metadata.sni == "allowed.test"
+    assert metadata.has_sni is True
+    assert metadata.tls_record_version == "TLS 1.2"
+    assert metadata.client_hello_version == "TLS 1.2"
+    assert metadata.handshake_type == 1
+    assert metadata.tls_record_length > 0
 
 
 def test_extract_sni_returns_none_without_sni_extension():

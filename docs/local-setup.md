@@ -54,6 +54,18 @@ pytest 실행:
 python -m pytest
 ```
 
+로그 요약:
+
+```bash
+./scripts/summarize-logs.py logs/proxy.jsonl
+```
+
+로컬 벤치마크:
+
+```bash
+./scripts/benchmark-local.py --requests 10 --concurrency 3
+```
+
 ## 포트 확인
 
 기본 포트는 테스트 서버 `8443`, 정책 프록시 `9443`이다.
