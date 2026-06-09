@@ -279,6 +279,7 @@ python -m proxy.main --listen-port 19443
 - [테스트 시나리오](docs/test-scenarios.md)
 - [테스트 결과 보고서](docs/test-report.md)
 - [상세 테스트 결과](docs/test-results.md)
+- [최종 결과보고서 초안](docs/final-report-draft.md)
 - [최종 시연 스크립트](docs/demo-script.md)
 - [최종 발표 구성안](docs/presentation-outline.md)
 - [Git 운영 규칙](docs/git-workflow.md)
