@@ -1,10 +1,12 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.13.2, pytest-9.0.3, pluggy-1.6.0
+rootdir: /Users/chanwoong-park/Desktop/배재대/Africa_Youth
+configfile: pyproject.toml
+testpaths: tests
+collected 14 items
 
-==================================== ERRORS ====================================
-__________________ ERROR collecting tests/test_sni_parser.py ___________________
-tests/test_sni_parser.py:6: in <module>
-    def build_client_hello(server_name: str | None = "allowed.test") -> bytes:
-E   TypeError: unsupported operand type(s) for |: 'type' and 'NoneType'
-=========================== short test summary info ============================
-ERROR tests/test_sni_parser.py - TypeError: unsupported operand type(s) for |...
-!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
-1 error in 0.08s
+tests/test_integration.py ....                                           [ 28%]
+tests/test_policy.py .....                                               [ 64%]
+tests/test_sni_parser.py .....                                           [100%]
+
+============================== 14 passed in 2.47s ==============================

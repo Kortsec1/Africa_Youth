@@ -11,10 +11,3 @@ captures/*.pcapng
 server/certs/server.crt
 server/certs/server.key
 .DS_Store
-
-# Ignore final report and related exported files
-최종_결과_보고서.md
-산출물_핵심_코드_및_결과.txt
-docs/final-report-implementation-bundle.md
-docs/test-report.md
-docs/test-results.md
