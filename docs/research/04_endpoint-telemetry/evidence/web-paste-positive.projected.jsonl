@@ -1,0 +1,4 @@
+{"projection":true,"experiment":"web-paste-positive","type":"experiment_start","observed_at_utc":"2026-10-26T14:41:42.976Z","origin":null,"trusted":null,"target_editable":null,"target_tag":null,"payload_collected":null}
+{"projection":true,"experiment":"web-paste-positive","type":"page_ready","observed_at_utc":"2026-10-26T14:42:02.4Z","origin":"https://chatgpt.com","trusted":null,"target_editable":null,"target_tag":null,"payload_collected":null}
+{"projection":true,"experiment":"web-paste-positive","type":"paste_event","observed_at_utc":"2026-10-26T14:42:50.823Z","origin":"https://chatgpt.com","trusted":true,"target_editable":true,"target_tag":"P","payload_collected":false}
+{"projection":true,"experiment":"web-paste-positive","type":"experiment_stop","observed_at_utc":"2026-10-26T14:42:56.755Z","origin":null,"trusted":null,"target_editable":null,"target_tag":null,"payload_collected":null}

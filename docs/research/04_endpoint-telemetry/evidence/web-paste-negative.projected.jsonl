@@ -1,0 +1,3 @@
+{"projection":true,"experiment":"web-paste-negative","type":"experiment_start","observed_at_utc":"2026-10-26T14:44:37.341Z","origin":null,"trusted":null,"target_editable":null,"target_tag":null,"payload_collected":null}
+{"projection":true,"experiment":"web-paste-negative","type":"page_ready","observed_at_utc":"2026-10-26T14:44:39.412Z","origin":"https://chatgpt.com","trusted":null,"target_editable":null,"target_tag":null,"payload_collected":null}
+{"projection":true,"experiment":"web-paste-negative","type":"experiment_stop","observed_at_utc":"2026-10-26T14:44:57.15Z","origin":null,"trusted":null,"target_editable":null,"target_tag":null,"payload_collected":null}

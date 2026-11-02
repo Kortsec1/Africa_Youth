@@ -1,0 +1,42 @@
+[
+  {
+    "source_file": "events-20261026T141429Z-a4d81336-ddeb-41a1-8c74-52e2c10afbd3.jsonl",
+    "source_sha256": "E6F8E2BC09313E34A6AAB1B953221FCC44B07A5C585FA29B15A8CDA27C555911",
+    "published_file": "clipboard-six-copies.projected.jsonl",
+    "published_sha256": "C37D167DAC5935B42D9BD7F562BA7D1F7CFFD0D8F2D50E1C24116DA21BFF0CEF",
+    "kind": "selected-fields-projection",
+    "source_run_id": "a4d81336-ddeb-41a1-8c74-52e2c10afbd3"
+  },
+  {
+    "source_file": "events-20261026T155911Z-7e137a15-736e-4098-89ef-a25f29cbfbdb.jsonl",
+    "source_sha256": "937732F78CC00450C6AD8250FF11EAD29F7F9296D29FE723996F80BE9A17ACA4",
+    "published_file": "copy-once-paste-three.projected.jsonl",
+    "published_sha256": "364255565241C9F0C415D86A615ACE43B292CB9C8A76F2584F89F510F9E325A8",
+    "kind": "selected-fields-projection",
+    "source_run_id": "7e137a15-736e-4098-89ef-a25f29cbfbdb"
+  },
+  {
+    "source_file": "events-20261026T155307Z-32ef9321-20cb-4c04-80c1-2327cfab7b74.jsonl",
+    "source_sha256": "AE6736F5674763D48B67FE91DA07541F830B65DC7A33F2C251F25EF82180C923",
+    "published_file": "process-test.projected.jsonl",
+    "published_sha256": "D2FC3BA0C1E591E3B33EF7867E4A1B7CD2B4B19B90245A8DBB13B2A5A69D1AC1",
+    "kind": "selected-fields-projection",
+    "source_run_id": "32ef9321-20cb-4c04-80c1-2327cfab7b74"
+  },
+  {
+    "source_file": "chrome-paste-2ff47d13-4653-4f23-b696-e853d420524d.jsonl",
+    "source_sha256": "B97ED88FC4A0D0695217465CC88FC138F8657809811EAD4CB79106677E94FA93",
+    "published_file": "web-paste-positive.projected.jsonl",
+    "published_sha256": "0D872C65F8D5E4CD70E76E1223108ACEFB66528F03AB25379246781B0ED559AD",
+    "kind": "selected-fields-projection",
+    "source_run_id": "2ff47d13-4653-4f23-b696-e853d420524d"
+  },
+  {
+    "source_file": "chrome-paste-596603d6-60e8-4a07-bf25-5c1557469f0f.jsonl",
+    "source_sha256": "4E09BE05D18D5617F5289876B5F37F11C3C6B2DE8B14A811CC8E84AF18F54959",
+    "published_file": "web-paste-negative.projected.jsonl",
+    "published_sha256": "6866476FE21E21CE66D109D334488E283ABDE88D0CA96A4B0A2281A511EC2318",
+    "kind": "selected-fields-projection",
+    "source_run_id": "596603d6-60e8-4a07-bf25-5c1557469f0f"
+  }
+]
