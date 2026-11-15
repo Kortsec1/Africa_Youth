@@ -16,3 +16,15 @@
 **/validation/*probe*.txt
 **/validation/*result*.json
 .vs/
+
+# 분석 엔진 (Python) 산출물
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+out/
+/build/
+/dist/
+# 실제 사건/실험 원본은 개인정보 포함 가능 → 커밋 금지 (요약·익명화본만)
+cases/
+_raw/

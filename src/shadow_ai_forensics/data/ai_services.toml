@@ -1,0 +1,175 @@
+# Shadow AI 서비스 카탈로그
+#
+# role 의미
+#   chat      : 대화형 UI 자체 (사용 행위의 직접 증거로 취급)
+#   upload    : 파일 업로드/첨부 전용 엔드포인트 (업로드 정황의 강한 증거)
+#   api       : 프로그래밍 API (스크립트·IDE·에이전트 사용 정황)
+#   static    : CDN·정적 리소스 (단독으로는 사용 증거로 쓰지 않음)
+#   corporate : 회사 홈페이지·블로그·문서 (방문 ≠ AI 사용, 오탐 방지용)
+#
+# 도메인은 접미사 일치(suffix match)로 판정한다. "chatgpt.com" 은 "ws.chatgpt.com" 도 포함.
+# 목록은 2026-11 기준이며 서비스 정책에 따라 바뀌므로 주기적 갱신이 필요하다.
+# 출처: OpenAI Help Center 'Network recommendations for ChatGPT' 등 (docs/research/05 참고)
+
+[[service]]
+name = "ChatGPT"
+vendor = "OpenAI"
+chat = ["chatgpt.com", "chat.openai.com"]
+upload = ["oaiusercontent.com"]
+api = ["api.openai.com"]
+static = ["oaistatic.com", "oaistatsig.com"]
+corporate = ["openai.com"]
+processes = ["chatgpt.exe"]
+window_titles = ["chatgpt"]
+
+[[service]]
+name = "Claude"
+vendor = "Anthropic"
+chat = ["claude.ai"]
+upload = []
+api = ["api.anthropic.com"]
+static = []
+corporate = ["anthropic.com", "claude.com"]
+processes = ["claude.exe"]
+window_titles = ["claude"]
+
+[[service]]
+name = "Gemini"
+vendor = "Google"
+chat = ["gemini.google.com", "bard.google.com", "aistudio.google.com"]
+upload = []
+api = ["generativelanguage.googleapis.com"]
+static = []
+corporate = []
+processes = []
+window_titles = ["gemini"]
+
+[[service]]
+name = "Copilot"
+vendor = "Microsoft"
+chat = ["copilot.microsoft.com", "copilot.cloud.microsoft"]
+upload = []
+api = []
+static = []
+corporate = []
+processes = []
+window_titles = ["copilot"]
+
+[[service]]
+name = "Perplexity"
+vendor = "Perplexity"
+chat = ["perplexity.ai"]
+upload = []
+api = ["api.perplexity.ai"]
+static = []
+corporate = []
+processes = ["perplexity.exe"]
+window_titles = ["perplexity"]
+
+[[service]]
+name = "DeepSeek"
+vendor = "DeepSeek"
+chat = ["chat.deepseek.com"]
+upload = []
+api = ["api.deepseek.com"]
+static = []
+corporate = ["deepseek.com"]
+processes = []
+window_titles = ["deepseek"]
+
+[[service]]
+name = "Grok"
+vendor = "xAI"
+chat = ["grok.com"]
+upload = []
+api = ["api.x.ai"]
+static = []
+corporate = ["x.ai"]
+processes = []
+window_titles = ["grok"]
+
+[[service]]
+name = "Le Chat"
+vendor = "Mistral"
+chat = ["chat.mistral.ai"]
+upload = []
+api = ["api.mistral.ai"]
+static = []
+corporate = ["mistral.ai"]
+processes = []
+window_titles = ["le chat"]
+
+[[service]]
+name = "Wrtn"
+vendor = "Wrtn Technologies"
+chat = ["wrtn.ai"]
+upload = []
+api = []
+static = []
+corporate = []
+processes = []
+window_titles = ["뤼튼", "wrtn"]
+
+[[service]]
+name = "CLOVA X"
+vendor = "NAVER"
+chat = ["clova-x.naver.com"]
+upload = []
+api = ["clovastudio.stream.ntruss.com"]
+static = []
+corporate = []
+processes = []
+window_titles = ["clova x"]
+
+[[service]]
+name = "Poe"
+vendor = "Quora"
+chat = ["poe.com"]
+upload = []
+api = []
+static = []
+corporate = []
+processes = []
+window_titles = []
+
+# ---- 로컬 LLM: 네트워크 증거가 거의 없으므로 프로세스/파일 흔적 위주 ----
+[[service]]
+name = "Ollama"
+vendor = "Ollama"
+local = true
+chat = []
+upload = []
+api = []
+static = []
+corporate = ["ollama.com", "registry.ollama.ai"]
+processes = ["ollama.exe", "ollama app.exe"]
+window_titles = []
+
+[[service]]
+name = "LM Studio"
+vendor = "Element Labs"
+local = true
+chat = []
+upload = []
+api = []
+static = []
+corporate = ["lmstudio.ai"]
+processes = ["lm studio.exe", "lms.exe"]
+window_titles = ["lm studio"]
+
+[browser]
+processes = ["chrome.exe", "msedge.exe", "firefox.exe", "whale.exe", "brave.exe", "opera.exe"]
+
+[sensitive]
+# 경로/파일명에 포함되면 민감 자료로 표시 (대소문자 무시)
+keywords = [
+  "재무", "기밀", "대외비", "인사", "급여", "연봉", "고객", "개인정보", "계약", "설계", "소스",
+  "confidential", "secret", "salary", "payroll", "customer", "contract", "financial", "internal",
+]
+extensions = [".xlsx", ".xls", ".docx", ".doc", ".pptx", ".pdf", ".csv", ".hwp", ".hwpx", ".sql", ".txt"]
+
+[archive]
+extensions = [".zip", ".7z", ".rar", ".tar", ".gz", ".alz", ".egg"]
+
+[local_model]
+extensions = [".gguf", ".safetensors", ".ggml"]
