@@ -58,26 +58,5 @@
   - $MFT & $UsnJrnl (Downloads 경로): 브라우저를 통해 AI가 생성한 결과물(예: 코드 텍스트 파일, 다운로드된 문서)이 저장될 때 생성되는 $MFT 레코드와 $UsnJrnl의 FileCreate 이력을 분석함.   
 * 3. 비인가 AI 데스크톱 앱 및 스크립트 사용 식별
   - $MFT: %AppData%나 Program Files 경로에 비인가 AI 앱의 설치 흔적이나 캐시, SQLite DB 파일이 생성된 시간($SI, $FN 타임스탬프)을 분석하여 언제부터 사용했는지 특정함. 
-
-## 3-1. 추가 조사: 업로드·다운로드를 보강하는 아티팩트
-* Zone.Identifier (ADS, Mark of the Web)
-  - 브라우저로 받은 파일에 `파일명:Zone.Identifier` 스트림이 생기고 `ZoneId=3`, `HostUrl`, `ReferrerUrl` 이 기록됨.
-  - MFTECmd 는 `ZoneIdContents` 컬럼으로, Sysmon 은 EID 15(FileCreateStreamHash)의 `Contents` 필드로 출력.
-  - AI 생성물 다운로드(SAI-005)의 '출처 URL' 증거. 단, 브라우저 설정에 따라 ReferrerUrl 이 생략될 수 있음 → 실험 필요.
-* OpenSavePidlMRU / LastVisitedPidlMRU (NTUSER.DAT `Software\Microsoft\Windows\CurrentVersion\Explorer\ComDlg32`)
-  - 공용 '열기/저장' 대화상자에서 선택한 파일(확장자별)과 그 대화상자를 띄운 실행파일(chrome.exe 등)을 기록.
-  - 브라우저 파일 업로드 정황(SAI-004)의 핵심 보강 증거 후보. 파싱: RECmd (ComDlg32 플러그인) / Registry Explorer.
-* $Recycle.Bin ($I / $R): 삭제(SAI-009) 시 원래 경로·삭제 시각 복구. RBCmd 로 파싱.
-* Prefetch / Amcache: 다운로드한 AI 생성물 실행(SAI-006)·AI 앱 실행(SAI-007)의 실행 흔적 보강. PECmd / AmcacheParser.
-
-## 3-2. PoC 연동
-* `collector/collect_artifacts.ps1` 이 LECmd·JLECmd·MFTECmd 를 실행해 분석 엔진 입력 폴더를 만든다.
-* 엔진은 EZ Tools CSV 를 헤더로 자동 판별한다 (`python -m shadow_ai_forensics detect <폴더>`).
-* 실험 절차와 기록 양식은 [results.md](results.md) 참고.
-
 ## 4. 참고 자료
-* Eric Zimmerman's Tools (MFTECmd, LECmd, JLECmd, RECmd, PECmd, RBCmd) https://ericzimmerman.github.io/
-* SANS, *Windows Forensic Analysis* 포스터 — LNK/JumpList/ShellBags/ComDlg32 아티팩트 의미 https://www.sans.org/posters/windows-forensic-analysis/
-* Microsoft, Change Journal(USN) 레코드 및 Reason 플래그 https://learn.microsoft.com/windows/win32/api/winioctl/ns-winioctl-usn_record_v2
-* Microsoft, Mark of the Web / Zone.Identifier 개요 https://learn.microsoft.com/deployedge/per-site-configuration-by-policy
 
