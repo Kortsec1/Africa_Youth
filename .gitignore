@@ -1,0 +1,18 @@
+# 연구 실행 산출물과 로컬 설정
+**/bin/
+**/obj/
+**/logs/
+**/node_modules/
+*.etl
+*.evtx
+*.iso
+*.vhd
+*.vhdx
+*.bak
+.env
+.env.*
+**/validation/file-test-*/
+**/validation/process-etw-*/
+**/validation/*probe*.txt
+**/validation/*result*.json
+.vs/

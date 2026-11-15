@@ -61,3 +61,7 @@ Windows Endpoint
 단순히 AI 서비스에 접속했는지를 탐지하는 것이 아니라,
 
 **AI 서비스 사용 전후에 사용자가 어떤 행동을 했는지 포렌식 증거를 기반으로 설명할 수 있는 시스템을 구현하는 것**이 최종 목표입니다.
+
+## Endpoint Telemetry 조사·PoC 결과
+
+[Windows 실시간 사용자 행동 수집](docs/research/04_endpoint-telemetry/README.md)에 조사, 학생용 보고서, PoC 코드와 공유용 실험 증거를 정리했습니다. 기본 기능 검증 단계이며 전체 유출 탐지 구현 완료를 의미하지 않습니다.
