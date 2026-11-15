@@ -77,3 +77,17 @@ comparison_cases.json의 시나리오 9개를 기존 sample_events.json의
 
 60초 조건의 오연결: 시간만 5건 → 식별자 추가 3건 → 순서 추가 1건.
 같은 사용자의 우연히 인접한 무관한 작업은 현재 정보만으로 구분할 수 없다.
+
+## 시간 범위 확대 실험
+
+기존 비교 입력은 그대로 유지한다. 아래 파일로 추가 사례를 실행한다.
+
+```sh
+python3 compare.py comparison_cases_extended.json > comparison_extended_output.json
+```
+
+- comparison_cases_extended.json: 기존 9개 + 긴 시간 간격의 무관한 작업 2개
+- comparison_extended_output.json: 추가 실험 실행 결과
+
+입력 파일 인자를 생략하면 기존 comparison_cases.json을 사용한다.
+평가 건수는 입력에서 자동 집계하며, 정답 null 사례는 제외한다.
