@@ -1,0 +1,44 @@
+{
+  "os": "Microsoft Windows NT 10.0.26200.0",
+  "format": "NTFS",
+  "powerShell": "7.6.5",
+  "hashMatch": true,
+  "originalFileId": "File ID is 0x000000000000000000050000000b9f16",
+  "copyFileId": "File ID is 0x000000000000000000040000000b9f19",
+  "usnProbe": "Major Version    : 0x3\r\nMinor Version    : 0x0\r\nFileRef#         : 0x000000000000000000040000000b9f19\r\nParent FileRef#  : 0x00000000000000000026000000045474\r\nUsn              : 0x00000001e10ca0e0\r\nTime Stamp       : 0x0000000000000000 오전 12:00:00 1601-01-01\r\nReason           : 0x0\r\nSource Info      : 0x0\r\nSecurity Id      : 0x0\r\nFile Attributes  : 0x20\r\nFile Name Length : 0x2e\r\nFile Name Offset : 0x4c\r\nFileName         : forensics-demo-copy.txt",
+  "copyExistsAfterRemoval": false,
+  "events": [
+    {
+      "phase": "created",
+      "file": "forensics-demo.txt",
+      "creationUtc": "2026-11-15T12:11:54.7789159Z",
+      "writeUtc": "2026-11-15T12:11:54.7789159Z",
+      "accessUtc": "2026-11-15T12:11:54.7789159Z",
+      "bytes": 14
+    },
+    {
+      "phase": "read",
+      "file": "forensics-demo.txt",
+      "creationUtc": "2026-11-15T12:11:54.7789159Z",
+      "writeUtc": "2026-11-15T12:11:54.7789159Z",
+      "accessUtc": "2026-11-15T12:11:55.9436649Z",
+      "bytes": 14
+    },
+    {
+      "phase": "modified",
+      "file": "forensics-demo.txt",
+      "creationUtc": "2026-11-15T12:11:54.7789159Z",
+      "writeUtc": "2026-11-15T12:11:57.0664093Z",
+      "accessUtc": "2026-11-15T12:11:57.0664093Z",
+      "bytes": 23
+    },
+    {
+      "phase": "copied",
+      "file": "forensics-demo-copy.txt",
+      "creationUtc": "2026-11-15T12:11:58.1901882Z",
+      "writeUtc": "2026-11-15T12:11:57.0664093Z",
+      "accessUtc": "2026-11-15T12:11:58.1922003Z",
+      "bytes": 23
+    }
+  ]
+}
