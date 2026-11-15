@@ -1,4 +1,5 @@
 import json
+import sys
 from copy import deepcopy
 from datetime import timedelta
 from pathlib import Path
@@ -7,8 +8,8 @@ from analyze import analyze, time_of, POLICY, POLICY_START
 ROOT = Path(__file__).resolve().parent
 
 
-def run():
-    cases = json.loads((ROOT / "comparison_cases.json").read_text(encoding="utf-8"))
+def run(case_file="comparison_cases.json"):
+    cases = json.loads((ROOT / case_file).read_text(encoding="utf-8"))
     sample = json.loads((ROOT / "sample_events.json").read_text(encoding="utf-8"))
     base_file = next(e for e in sample if e["event_id"] == "evt-001")
     base_visit = next(e for e in sample if e["event_id"] == "evt-003")
@@ -38,10 +39,11 @@ def run():
             for method, predicted in predictions.items():
                 label = ("TP" if predicted else "FN") if case["related"] else ("FP" if predicted else "TN")
                 methods[method][label] += 1
-        report.append({"window_seconds": window, "scored_cases": 8,
-                       "excluded_cases": ["C09"], "counts": methods, "details": details})
+        report.append({"window_seconds": window, "scored_cases": sum(c["related"] is not None for c in cases),
+                       "excluded_cases": [c["id"] for c in cases if c["related"] is None], "counts": methods, "details": details})
     return {"synthetic": True, "policy_version": "demo-v1", "results": report}
 
 
 if __name__ == "__main__":
-    print(json.dumps(run(), ensure_ascii=False, indent=2))
+    case_file = sys.argv[1] if len(sys.argv) > 1 else "comparison_cases.json"
+    print(json.dumps(run(case_file), ensure_ascii=False, indent=2))
