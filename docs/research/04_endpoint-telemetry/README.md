@@ -1,54 +1,37 @@
-# 연구 주제
-Endpoint Telemetry — Clipboard, Process, Foreground Window
+# Endpoint Telemetry: Windows 실시간 사용자 행동 수집
+
+담당: 동훈 / 실험 정리 기준: 2026-11-02 / 저장소 정리: 2026-11-03
 
 ## 1. 연구 목표
-- 사후 포렌식 아티팩트로는 남지 않는 **"복사 → 붙여넣기", "어느 창을 보고 있었는가"** 를 기록하는 텔레메트리 수집 방법을 조사·구현한다.
-- 수집 범위를 개인정보 보호와 균형 있게 설계한다 (내용이 아닌 메타데이터 중심).
+
+클립보드 상태 변경, 활성 창 전환, 프로세스 시작·종료를 실시간으로 기록해 AI 사용 전후의 행동 맥락을 보완한다. 복사와 창 전환만으로 붙여넣기·전송을 단정하지 않는다.
+
+**현재 판정: 기본 PoC와 주요 기능 검증 완료, 일부 정량·통합 실험 미완료.** 완성된 유출 탐지 시스템은 아니다.
 
 ## 2. 기술 조사
 
-### 2.1 클립보드
-| 방법 | 수집 정보 | 장점 | 한계 |
-|---|---|---|---|
-| **Sysmon EID 24 (ClipboardChange)** | 시각, 복사한 프로세스(Image), 세션, 내용 해시; 내용은 ArchiveDirectory 에 별도 보관 | 표준 도구, 중앙 수집 용이 | Sysmon 12.0(스키마 4.40)부터, `<CaptureClipboard/>` 필요. 텍스트만 대상. 아카이브 폴더가 빠르게 커질 수 있음 |
-| Windows 클립보드 기록 (Win+V) | 최근 항목 | OS 기본 | 사용자가 켜야 함, 사후 분석 경로 제한적 |
-| ActivitiesCache.db (Timeline) | 구버전 Win10 에서 클립보드 활동 기록 사례 | 사후 아티팩트 | Win11 에서 Timeline 기능 축소 → 신뢰 어려움 |
-| **자체 에이전트** (`collector/telemetry_agent.py`) | 시퀀스 번호 변경 시각, 소유/포그라운드 프로세스, 창 제목, 텍스트 길이·SHA-256 | 창 제목(=원본 문서명)까지 연결 | 상시 실행 필요, 폴링 간격 내 누락 가능 |
-
-- 핵심 API: `GetClipboardSequenceNumber`(변경 감지), `GetClipboardOwner`(소유 창), `AddClipboardFormatListener`(이벤트 방식, 개선 과제).
-- **붙여넣기(Ctrl+V)는 어떤 방식으로도 일반적으로 기록되지 않는다.** → "복사 후 N초 내 AI 창 전환"을 정황으로 사용 (SAI-003).
-
-### 2.2 포그라운드 창
-| 방법 | 수집 정보 | 한계 |
+| 수단 | 역할 | 확인 범위 |
 |---|---|---|
-| 자체 에이전트 `GetForegroundWindow` 폴링 | 창 전환 시각, 제목, 클래스, 프로세스 | 상시 실행 필요 |
-| `SetWinEventHook(EVENT_SYSTEM_FOREGROUND)` | 전환 이벤트 즉시 수신 | 메시지 루프 필요 (개선 과제) |
-| SRUM (Win11 App Timeline) | 앱별 포그라운드 사용량 | 시간 단위(1시간) 집계 — 분 단위 재구성 불가 |
-| UserAssist / BAM | 앱 실행 횟수·마지막 실행 | 창 단위 정보 없음 |
+| Clipboard API | 변경 알림·형식 조회 | 실측·재시도 개선 확인 |
+| WinEvent hook | 활성 창·선택적 제목 | 기본 수신, 창/탭 횟수 검증 미완료 |
+| WMI Trace | 프로세스 실행·종료 | 종료 세션 필터 수정 및 최소 검증 |
+| Security Event Log | 감사 조건에 따른 기록 | 감사 설정·접근 확인, 생성 대조 미수행 |
+| ETW | 프로세스 사건의 독립 추적 | 최소 시작/종료 비교 완료 |
+| Chrome 보조 확장 | 웹 paste 이벤트 | 붙여넣기1건/대조0건 확인 |
 
-- 창 클래스 **`#32770`** 은 표준 대화상자이다. 브라우저가 소유한 `#32770` 창(제목 '열기'/'Open')은 **파일 업로드 선택창**일 가능성이 높아 SAI-004 의 핵심 단서로 쓴다.
-- 브라우저 창 제목에는 활성 탭 제목이 들어간다 (예: `재무 데이터 요약 - ChatGPT - Chrome`) → 어느 AI 서비스·어느 대화였는지 식별.
+## 3. 프로젝트 적용 가능성과 산출물
 
-### 2.3 프로세스
-| 방법 | 수집 정보 | 비고 |
-|---|---|---|
-| Sysmon EID 1 | 이미지, 명령줄, 부모, 해시, ProcessGuid | AI 생성물 실행(SAI-006), 로컬 LLM(SAI-007) |
-| Security 4688 | 프로세스 생성 (명령줄은 GPO 설정 필요) | Sysmon 미설치 환경 대안 |
-| Prefetch / Amcache | 사후 실행 흔적 | 02 와 공동 |
+- [학생용 실험 결과보고서](results.md): 방법·결과·의미와 미완료 항목.
+- [PoC 코드와 실행 안내](poc/windows-collector/README.md): C# 소스·프로젝트·검증 스크립트.
+- [구현 구조와 변경사항](implementation.md): 구성요소·이벤트 구조·수정의 이유.
+- [6개 요구사항 충족 여부](requirements.md): C1/C3/W1/W2/P1/P3/X1/X2/F1 구분.
+- [공유용 증거](evidence/README.md): 선택 필드 기록·통계·공개 제한.
+- [Chrome 실험 확장](tools/chrome-paste-observer/README.md): 웹 보조 계측. Windows 본체와 별도.
 
-### 2.4 개인정보 보호 설계
-- 클립보드 **내용 미저장**(길이·해시만). 해시는 사후에 원본 문서 일부와 대조하는 용도.
-- 창 제목에는 문서명·메일 제목이 들어가므로 **수집 고지·동의**가 전제. 보존 기간 제한(예: 30일).
-- Sysmon EID 24 아카이브(원문 저장)는 실험 환경에서만 사용, 운영 시 대상 프로세스 한정 또는 비활성화.
+원래6개 과업은 API조사, 프로세스조사, EventLog/ETW조사, Clipboard/활성창PoC, 시나리오실험, 기술한계정리다. 관련 코드와 기록을 이 분야에 모았으며 다른 팀원의 연구 문서는 변경하지 않는다.
 
-## 3. 프로젝트 적용 가능성
-- 구현: `collector/telemetry_agent.py` (ctypes, 표준 라이브러리만) → `agent.jsonl` → 엔진 `parsers/agent.py`.
-- Sysmon 설정: `collector/sysmon-shadowai.xml` (EID 1/3/11/15/22/24/26).
-- 엔진은 Agent 와 Sysmon EID 24 가 같은 복사를 기록하면 하나로 병합하고 교차 확인으로 신뢰도를 올린다.
-- 에이전트는 리눅스에서 작성되어 **Windows 실측 검증이 필요**하다 → results.md 실험 T-1~T-5.
+현재 개인PC는 Smart App Control 차단 증적이 있어 실행 재현에 제약이 있다. 정책 우회 지시는 제공하지 않는다. 원시자료는 로컬 보존, 저장소에는 공유용 요약과 합성 실험의 선택 필드만 게시한다.
 
 ## 4. 참고 자료
-- O. Hartong, *Sysmon 12.0 — EventID 24* https://medium.com/falconforce/sysmon-12-0-eventid-24-31e0109c78e3
-- TrustedSec, *Sysmon Community Guide — Clipboard Capture* https://github.com/trustedsec/SysmonCommunityGuide/blob/master/chapters/clipboard-capture.md
-- Microsoft Learn, Clipboard 함수 (GetClipboardSequenceNumber, AddClipboardFormatListener) https://learn.microsoft.com/windows/win32/dataxchg/clipboard-functions
-- Microsoft Learn, SetWinEventHook https://learn.microsoft.com/windows/win32/api/winuser/nf-winuser-setwineventhook
+
+공식 API 출처는 [결과보고서의 참고 문서](results.md#45-주요-참고-문서)에 정리했다. 기능의 문헌상 설명과 실제 검증 성공은 구분한다.

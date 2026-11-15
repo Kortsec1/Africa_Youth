@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "연구용 ChatGPT 붙여넣기 관측",
+  "version": "0.1.0",
+  "description": "ChatGPT 웹의 붙여넣기 이벤트 메타데이터를 로컬에 기록합니다. 원문은 수집하지 않습니다.",
+  "permissions": ["storage"],
+  "background": {"service_worker": "background.js"},
+  "action": {"default_popup": "popup.html"},
+  "content_scripts": [{"matches": ["https://chatgpt.com/*"], "js": ["content.js"], "run_at": "document_start"}]
+}
