@@ -1,0 +1,363 @@
+{
+  "synthetic": true,
+  "policy_version": "demo-v1",
+  "results": [
+    {
+      "window_seconds": 30,
+      "scored_cases": 8,
+      "excluded_cases": [
+        "C09"
+      ],
+      "counts": {
+        "time": {
+          "TP": 0,
+          "FP": 5,
+          "TN": 1,
+          "FN": 2
+        },
+        "identity": {
+          "TP": 0,
+          "FP": 3,
+          "TN": 3,
+          "FN": 2
+        },
+        "ordered": {
+          "TP": 0,
+          "FP": 1,
+          "TN": 5,
+          "FN": 2
+        }
+      },
+      "details": [
+        {
+          "case": "C01",
+          "expected": true,
+          "predictions": {
+            "time": false,
+            "identity": false,
+            "ordered": false
+          },
+          "insufficient_context": false
+        },
+        {
+          "case": "C02",
+          "expected": true,
+          "predictions": {
+            "time": false,
+            "identity": false,
+            "ordered": false
+          },
+          "insufficient_context": false
+        },
+        {
+          "case": "C03",
+          "expected": false,
+          "predictions": {
+            "time": true,
+            "identity": false,
+            "ordered": false
+          },
+          "insufficient_context": false
+        },
+        {
+          "case": "C04",
+          "expected": false,
+          "predictions": {
+            "time": true,
+            "identity": false,
+            "ordered": false
+          },
+          "insufficient_context": false
+        },
+        {
+          "case": "C05",
+          "expected": false,
+          "predictions": {
+            "time": true,
+            "identity": true,
+            "ordered": false
+          },
+          "insufficient_context": false
+        },
+        {
+          "case": "C06",
+          "expected": false,
+          "predictions": {
+            "time": true,
+            "identity": true,
+            "ordered": true
+          },
+          "insufficient_context": false
+        },
+        {
+          "case": "C07",
+          "expected": false,
+          "predictions": {
+            "time": true,
+            "identity": true,
+            "ordered": false
+          },
+          "insufficient_context": false
+        },
+        {
+          "case": "C08",
+          "expected": false,
+          "predictions": {
+            "time": false,
+            "identity": false,
+            "ordered": false
+          },
+          "insufficient_context": false
+        },
+        {
+          "case": "C09",
+          "expected": null,
+          "predictions": {
+            "time": true,
+            "identity": false,
+            "ordered": false
+          },
+          "insufficient_context": true
+        }
+      ]
+    },
+    {
+      "window_seconds": 60,
+      "scored_cases": 8,
+      "excluded_cases": [
+        "C09"
+      ],
+      "counts": {
+        "time": {
+          "TP": 1,
+          "FP": 5,
+          "TN": 1,
+          "FN": 1
+        },
+        "identity": {
+          "TP": 1,
+          "FP": 3,
+          "TN": 3,
+          "FN": 1
+        },
+        "ordered": {
+          "TP": 1,
+          "FP": 1,
+          "TN": 5,
+          "FN": 1
+        }
+      },
+      "details": [
+        {
+          "case": "C01",
+          "expected": true,
+          "predictions": {
+            "time": true,
+            "identity": true,
+            "ordered": true
+          },
+          "insufficient_context": false
+        },
+        {
+          "case": "C02",
+          "expected": true,
+          "predictions": {
+            "time": false,
+            "identity": false,
+            "ordered": false
+          },
+          "insufficient_context": false
+        },
+        {
+          "case": "C03",
+          "expected": false,
+          "predictions": {
+            "time": true,
+            "identity": false,
+            "ordered": false
+          },
+          "insufficient_context": false
+        },
+        {
+          "case": "C04",
+          "expected": false,
+          "predictions": {
+            "time": true,
+            "identity": false,
+            "ordered": false
+          },
+          "insufficient_context": false
+        },
+        {
+          "case": "C05",
+          "expected": false,
+          "predictions": {
+            "time": true,
+            "identity": true,
+            "ordered": false
+          },
+          "insufficient_context": false
+        },
+        {
+          "case": "C06",
+          "expected": false,
+          "predictions": {
+            "time": true,
+            "identity": true,
+            "ordered": true
+          },
+          "insufficient_context": false
+        },
+        {
+          "case": "C07",
+          "expected": false,
+          "predictions": {
+            "time": true,
+            "identity": true,
+            "ordered": false
+          },
+          "insufficient_context": false
+        },
+        {
+          "case": "C08",
+          "expected": false,
+          "predictions": {
+            "time": false,
+            "identity": false,
+            "ordered": false
+          },
+          "insufficient_context": false
+        },
+        {
+          "case": "C09",
+          "expected": null,
+          "predictions": {
+            "time": true,
+            "identity": false,
+            "ordered": false
+          },
+          "insufficient_context": true
+        }
+      ]
+    },
+    {
+      "window_seconds": 300,
+      "scored_cases": 8,
+      "excluded_cases": [
+        "C09"
+      ],
+      "counts": {
+        "time": {
+          "TP": 2,
+          "FP": 5,
+          "TN": 1,
+          "FN": 0
+        },
+        "identity": {
+          "TP": 2,
+          "FP": 3,
+          "TN": 3,
+          "FN": 0
+        },
+        "ordered": {
+          "TP": 2,
+          "FP": 1,
+          "TN": 5,
+          "FN": 0
+        }
+      },
+      "details": [
+        {
+          "case": "C01",
+          "expected": true,
+          "predictions": {
+            "time": true,
+            "identity": true,
+            "ordered": true
+          },
+          "insufficient_context": false
+        },
+        {
+          "case": "C02",
+          "expected": true,
+          "predictions": {
+            "time": true,
+            "identity": true,
+            "ordered": true
+          },
+          "insufficient_context": false
+        },
+        {
+          "case": "C03",
+          "expected": false,
+          "predictions": {
+            "time": true,
+            "identity": false,
+            "ordered": false
+          },
+          "insufficient_context": false
+        },
+        {
+          "case": "C04",
+          "expected": false,
+          "predictions": {
+            "time": true,
+            "identity": false,
+            "ordered": false
+          },
+          "insufficient_context": false
+        },
+        {
+          "case": "C05",
+          "expected": false,
+          "predictions": {
+            "time": true,
+            "identity": true,
+            "ordered": false
+          },
+          "insufficient_context": false
+        },
+        {
+          "case": "C06",
+          "expected": false,
+          "predictions": {
+            "time": true,
+            "identity": true,
+            "ordered": true
+          },
+          "insufficient_context": false
+        },
+        {
+          "case": "C07",
+          "expected": false,
+          "predictions": {
+            "time": true,
+            "identity": true,
+            "ordered": false
+          },
+          "insufficient_context": false
+        },
+        {
+          "case": "C08",
+          "expected": false,
+          "predictions": {
+            "time": false,
+            "identity": false,
+            "ordered": false
+          },
+          "insufficient_context": false
+        },
+        {
+          "case": "C09",
+          "expected": null,
+          "predictions": {
+            "time": true,
+            "identity": false,
+            "ordered": false
+          },
+          "insufficient_context": true
+        }
+      ]
+    }
+  ]
+}
