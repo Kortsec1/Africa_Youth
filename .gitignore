@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+out/
+/build/
+/dist/
+# 실제 사건/실험 원본은 개인정보 포함 가능 → 커밋 금지 (요약·익명화본만)
+cases/
+*.evtx
+_raw/

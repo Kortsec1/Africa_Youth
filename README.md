@@ -30,21 +30,78 @@
 - 사용자 행위 Timeline
 - 관련 포렌식 증거 확인
 
-## 시스템 구성 (예정)
+## 시스템 구성
 
-Windows Endpoint
-→ 이벤트 및 아티팩트 수집
-→ 데이터 정규화
-→ 상관분석 엔진
-→ 탐지 결과 및 Timeline 시각화
+```
+Windows Endpoint                      분석 PC (Python 3.11+, 외부 의존성 없음)
+┌──────────────────────────────┐      ┌─────────────────────────────────────────────────────┐
+│ collector/                   │      │ src/shadow_ai_forensics/                            │
+│  collect_artifacts.ps1 ──────┼─────▶│  parsers/   형식 자동판별 → 정규화 Event             │
+│   · 브라우저 History          │ 수집 │  catalog    AI 서비스·도메인 역할·민감 키워드 태깅    │
+│   · LECmd / JLECmd / MFTECmd  │ 폴더 │  correlate/ AI 세션 구성 → 탐지 규칙 9종            │
+│   · Sysmon·DNS 로그(JSONL)    │      │  report/    HTML 타임라인 · JSON · CSV · Markdown    │
+│  telemetry_agent.py (창·클립) │      └─────────────────────────────────────────────────────┘
+│  sysmon-shadowai.xml          │
+└──────────────────────────────┘
+```
+
+| 입력 (자동 판별) | 생성 도구 | 정규화 행위 |
+|---|---|---|
+| `$MFT` CSV, `$J` CSV | MFTECmd | 파일 생성·수정·삭제·이름변경, Zone.Identifier |
+| LNK CSV / JumpList CSV | LECmd / JLECmd | 파일 열람 |
+| `History` / `places.sqlite` | Chrome·Edge·Whale / Firefox | 방문, 다운로드 |
+| Sysmon·DNS-Client (EvtxECmd CSV 또는 JSONL) | EvtxECmd / collect_artifacts.ps1 | 프로세스, DNS, 연결, 클립보드, 파일 생성·삭제 |
+| `agent.jsonl` | telemetry_agent.py | 창 포커스, 파일 대화상자, 클립보드 |
+
+## 빠른 실행
+
+```bash
+pip install -e .[dev]                                   # 또는 PYTHONPATH=src
+python tools/generate_synthetic.py                      # 가상 시나리오 생성 (samples/synthetic/scenario01)
+python -m shadow_ai_forensics analyze samples/synthetic/scenario01 -o out
+# → out/report.html (탐지 결과 · 타임라인 · 이벤트 표), findings.json, timeline.csv, summary.md
+python -m shadow_ai_forensics rules                     # 탐지 규칙 목록
+python -m pytest                                        # 회귀 테스트
+```
+
+실제 PC 분석: 관리자 PowerShell 에서 `collector\collect_artifacts.ps1 -Out D:\case01` → `analyze D:\case01`.
+
+## 탐지 규칙
+
+| ID | 내용 | ID | 내용 |
+|---|---|---|---|
+| SAI-001 | AI 사용 세션 식별 (기준점) | SAI-006 | AI 생성물 실행 |
+| SAI-002 | 사용 전후 문서 열람 | SAI-007 | 비인가 AI 앱 / 로컬 LLM |
+| SAI-003 | 복사 → AI 창 전환 (붙여넣기 정황) | SAI-008 | 사용 전 압축(Staging) |
+| SAI-004 | 브라우저 파일 선택 → 업로드 정황 | SAI-009 | 사용 후 흔적 삭제 |
+| SAI-005 | AI 생성물 다운로드 | | |
+
+모든 탐지는 **확인된 사실(원본 파일:행 참조)** / **추론** / **다른 가능성(오탐 요인)** / **확정에 필요한 추가 증거** 로 분리해 출력합니다. 설계 근거는 [docs/research/01_detection/results.md](docs/research/01_detection/results.md).
 
 ## 현재 진행 단계
 
-**1단계: 기술 조사 및 구현 가능성 검증**
+**1단계: 기술 조사 및 구현 가능성 검증** — 조사 완료, PoC 구현 완료, **실측 실험 대기**
 
-현재는 각 Windows 아티팩트의 수집 가능성과 Shadow AI 사용 행위 재구성 가능성을 조사하고 있습니다.
+- [x] 분야별 기술 조사 (01~05 `README.md`)
+- [x] 정규화 스키마 · 파서 7종 · 상관분석 엔진 · HTML 리포트 PoC
+- [x] 실제 도구 출력 형식의 가상 시나리오로 엔진 검증 (회귀 테스트 16개)
+- [x] 수집 스크립트 · 텔레메트리 에이전트 · Sysmon 설정 초안
+- [ ] Windows VM 실측 실험 (02 W-1~8, 03 A-1~7, 04 T-1~5, 05 N-1~6) — 각 `results.md` 에 절차·기록 양식 준비됨
+- [ ] 실측 결과로 규칙 시간창·도메인 카탈로그 보정, ComDlg32(RECmd)·SRUM 파서 추가
 
-향후 실제 실험 결과를 바탕으로 분석 대상과 구현 범위를 구체화할 예정입니다.
+> ⚠ `samples/synthetic/` 은 **가상 데이터**입니다. 실험 결과로 인용하지 마세요.
+> `collector/` 스크립트는 아직 실제 Windows 에서 검증 전입니다.
+
+## 디렉터리
+
+```
+src/shadow_ai_forensics/   분석 엔진 (parsers, correlate, report, data/ai_services.toml)
+collector/                 Windows 수집 스크립트·에이전트·Sysmon 설정
+tools/generate_synthetic.py  가상 시나리오 생성기
+samples/synthetic/         가상 시나리오 데이터
+tests/                     회귀 테스트
+docs/research/0x_*/        분야별 조사(README) · 실험(results)
+```
 
 ## 연구 분야
 

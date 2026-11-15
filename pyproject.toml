@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "shadow-ai-forensics"
+version = "0.1.0"
+description = "Windows 포렌식 아티팩트 기반 Shadow AI 사용 행위 탐지 및 재구성 PoC"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []   # 표준 라이브러리만 사용 (분석 PC 반입 용이성)
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+
+[project.scripts]
+saf = "shadow_ai_forensics.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+shadow_ai_forensics = ["data/*.toml"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
