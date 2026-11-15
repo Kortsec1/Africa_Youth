@@ -41,6 +41,7 @@ class Action(str, Enum):
     # web
     WEB_VISIT = "web_visit"
     DOWNLOAD = "download"
+    WEB_PASTE = "web_paste"            # 웹페이지 paste 이벤트 (Chrome 관측 확장)
     # process / network
     PROCESS_START = "process_start"
     NET_CONNECT = "net_connect"
@@ -63,6 +64,8 @@ SOURCE_RELIABILITY = {
     "JumpList": 0.75,
     "DNSClient": 0.8,
     "Agent": 0.8,
+    "RealtimeCollector": 0.85,   # 04 실측 수집기 (C#)
+    "ChromePaste": 0.85,         # 04 Chrome 붙여넣기 관측 확장
 }
 
 

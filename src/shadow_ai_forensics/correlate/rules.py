@@ -27,6 +27,7 @@ EXEC_EXTS = {".exe", ".dll", ".ps1", ".bat", ".cmd", ".vbs", ".js", ".py", ".hta
 class Config:
     pre_window: timedelta = timedelta(minutes=15)      # 세션 시작 전 파일 열람을 볼 범위
     clip_to_ai: timedelta = timedelta(seconds=120)     # 복사 → AI 창 전환 허용 간격
+    paste_window: timedelta = timedelta(minutes=5)     # AI 창 전환 → paste 이벤트 허용 간격
     dialog_to_file: timedelta = timedelta(seconds=60)  # 파일 대화상자 → LNK 갱신 간격
     upload_net: timedelta = timedelta(seconds=90)      # LNK 갱신 ↔ 업로드 엔드포인트 통신 간격
     download_exec: timedelta = timedelta(hours=24)     # 다운로드 → 실행 추적 범위
@@ -166,12 +167,21 @@ def r002_file_before_ai(ctx: Context) -> None:
 
 # --------------------------------------------------------------------------- SAI-003
 def r003_clipboard_to_ai(ctx: Context) -> None:
-    """다른 앱에서 복사 → 짧은 시간 내 AI 창으로 전환 (붙여넣기 정황)."""
+    """다른 앱에서 복사 → AI 창 전환 (붙여넣기 정황), Chrome paste 이벤트가 있으면 직접 근거로 상향.
+
+    04 실측(동훈, 2026-11) 반영:
+    - 복사 → ChatGPT 창 전환만으로는 붙여넣기 유무를 구분할 수 없었음 (실험 3) → 기본 신뢰도를 낮게 둠
+    - 클립보드 변경 횟수 ≠ 붙여넣기 횟수 (실험 2: 복사1·붙여넣기3 → 알림1)
+    - Chrome 확장 paste_event 는 붙여넣기 1건/대조 0건으로 일치 (실험 4) → 직접 근거로 가산
+    """
     clips = [e for e in ctx.events if e.action == Action.CLIPBOARD_CHANGE]
     focus = sorted((e for e in ctx.events if e.action == Action.WINDOW_FOCUS), key=lambda e: e.ts)
+    pastes = sorted((e for e in ctx.events if e.action == Action.WEB_PASTE and e.ai_service), key=lambda e: e.ts)
+    used_paste: set[str] = set()
+    pref = {"Agent": 0, "RealtimeCollector": 1}
     for group in _cluster(clips, timedelta(seconds=2)):
-        # Agent 레코드(창 제목·길이 포함)를 대표로, Sysmon EID 24 는 교차 확인 증거로 사용
-        c = next((x for x in group if x.source == "Agent"), group[0])
+        # 창 제목이 있는 텔레메트리 레코드를 대표로, 나머지(Sysmon EID 24 등)는 교차 확인 증거로 사용
+        c = min(group, key=lambda x: pref.get(x.source, 9))
         corroborating = [x for x in group if x is not c]
         if c.ai_service:     # AI 앱 자체에서 복사한 것은 '가져오기'가 아니라 '결과물 반출'
             continue
@@ -181,6 +191,15 @@ def r003_clipboard_to_ai(ctx: Context) -> None:
         if not nxt:
             continue
         f = nxt[0]
+        # 다음 복사 전까지, AI 창 전환 후 paste_window 안의 같은 서비스 paste 이벤트
+        next_clip = next((x.ts for x in clips if x.ts > c.ts + timedelta(seconds=2)), None)
+        p_hi = f.ts + ctx.cfg.paste_window
+        if next_clip and next_clip < p_hi:
+            p_hi = next_clip
+        paste = next((p for p in pastes if c.ts <= p.ts <= p_hi and p.ai_service == f.ai_service
+                      and p.id not in used_paste), None)
+        if paste:
+            used_paste.add(paste.id)
         intervening = [x for x in focus if c.ts < x.ts < f.ts and not x.ai_service]
         session = next((s for s in ctx.sessions if s.start - ctx.cfg.clip_to_ai <= f.ts <= s.end + ctx.cfg.clip_to_ai
                         and s.service == f.ai_service), None)
@@ -189,25 +208,57 @@ def r003_clipboard_to_ai(ctx: Context) -> None:
         facts = [_fact(c, f"{c.process_name or '알 수 없는 프로세스'}에서 클립보드 변경"
                           + (f" (창: '{src_title}')" if src_title else "")
                           + (f", 길이 {c.attrs['length']}자" if c.attrs.get("length") else "")),
-                 _fact(f, f"{(f.ts - c.ts).seconds}초 후 {f.ai_service} 창으로 포커스 전환 ('{f.title}')")]
+                 _fact(f, f"{int((f.ts - c.ts).total_seconds())}초 후 {f.ai_service} 창으로 포커스 전환 ('{f.title}')")]
         for x in corroborating:
-            facts.insert(1, _fact(x, f"동일 시각 클립보드 변경 교차 확인 ({x.process_name})"))
+            facts.insert(1, _fact(x, f"동일 시각 클립보드 변경 교차 확인 ({x.process_name or x.source})"))
         if intervening:
             facts.append(f"사이에 다른 창 전환 {len(intervening)}회")
+        if paste:
+            facts.append(_fact(paste, f"{paste.domain} 페이지에서 paste 이벤트 관측 "
+                                      f"(trusted={paste.attrs.get('trusted')}, editable={paste.attrs.get('target_editable')})"))
+        bonus = ((0.1 if not intervening else 0) + (0.1 if sensitive else 0)
+                 + (0.05 if (f.ts - c.ts) <= timedelta(seconds=30) else 0) + (0.05 if corroborating else 0)
+                 + (0.3 if paste else 0))
+        if paste:
+            inference = (f"{c.process_name or '다른 앱'}에서 복사한 직후 {f.ai_service} 페이지에서 붙여넣기 이벤트가 관측됨 → "
+                         f"복사한 내용을 AI 입력창에 붙여넣은 것으로 판단 (전송 여부는 미확인)")
+        else:
+            inference = (f"{c.process_name or '다른 앱'}에서 복사 후 {f.ai_service}로 전환함. 붙여넣기 가능성이 있으나 "
+                         "OS 텔레메트리만으로는 붙여넣기 여부를 구분할 수 없음")
         ctx.findings.append(Finding(
-            rule_id="SAI-003", title=f"클립보드 복사 후 {f.ai_service} 전환",
+            rule_id="SAI-003",
+            title=f"클립보드 복사 → {f.ai_service} " + ("붙여넣기 관측" if paste else "전환 (붙여넣기 미확인)"),
             severity="high" if sensitive else "medium",
-            confidence=_conf(0.5, (0.2 if not intervening else 0) + (0.1 if sensitive else 0)
-                             + (0.05 if (f.ts - c.ts) <= timedelta(seconds=30) else 0)
-                             + (0.05 if corroborating else 0)),
-            ts=c.ts, session_id=session.id if session else "", evidence=[c, *corroborating, f],
+            confidence=_conf(0.35, bonus),
+            ts=c.ts, session_id=session.id if session else "", evidence=[c, *corroborating, f] + ([paste] if paste else []),
             facts=facts,
-            inference=(f"{c.process_name}에서 복사한 내용을 {f.ai_service} 입력창에 붙여넣었을 가능성이 높음"
-                       + (" (원본 창 제목상 민감 문서)" if sensitive else "") + "."),
-            alternatives=["복사 후 AI 창을 단순 확인만 하고 붙여넣지 않았을 가능성",
-                          "복사한 내용이 문서 본문이 아닌 짧은 키워드·URL일 가능성 (길이 확인 필요)"],
-            gaps=["붙여넣기 동작 자체는 OS 아티팩트로 남지 않음 → 브라우저 IndexedDB/서비스 대화 기록 또는 "
-                  "Sysmon EID 24 아카이브(클립보드 내용 해시)와 원본 문서 비교 필요"],
+            inference=inference + (" (원본 창 제목상 민감 문서)." if sensitive else "."),
+            alternatives=(["paste 이벤트는 삽입·전송 성공을 보장하지 않음 (페이지가 기본 동작을 취소할 수 있음)"] if paste else
+                          ["복사 후 AI 창을 확인만 하고 붙여넣지 않았을 가능성 — 04 실측에서 '붙여넣기 함/안 함'이 "
+                           "Windows 수집기 기록상 동일하게 나타남"]) +
+                         ["복사한 내용이 문서 본문이 아닌 짧은 키워드·URL일 가능성",
+                          "클립보드 변경 1회에 붙여넣기가 여러 번일 수 있음 (변경 횟수 ≠ 붙여넣기 횟수)"],
+            gaps=(["전송 여부: 브라우저 네트워크 기록(HAR) 또는 서비스 대화 기록"] if paste else
+                  ["붙여넣기 직접 근거: Chrome 붙여넣기 관측 확장(04) paste_event, 또는 서비스 대화 기록"]) +
+                 ["복사 내용과 원본 문서의 대조: Sysmon EID 24 아카이브 해시"],
+            mitre=["T1567"],
+        ))
+    # 클립보드 기록과 연결되지 않은 AI 페이지 붙여넣기 (출처 불명 붙여넣기)
+    for p in pastes:
+        if p.id in used_paste:
+            continue
+        session = next((s for s in ctx.sessions if s.start - timedelta(minutes=1) <= p.ts <= s.end + timedelta(minutes=1)
+                        and s.service == p.ai_service), None)
+        ctx.findings.append(Finding(
+            rule_id="SAI-003", title=f"{p.ai_service} 입력창 붙여넣기 (복사 출처 미상)", severity="low",
+            confidence=_conf(0.6, 0.05 if p.attrs.get("target_editable") else 0), ts=p.ts,
+            session_id=session.id if session else "", evidence=[p],
+            facts=[_fact(p, f"{p.domain} 페이지에서 paste 이벤트 관측 (trusted={p.attrs.get('trusted')}, "
+                            f"editable={p.attrs.get('target_editable')})")],
+            inference=f"{p.ai_service}에 무언가를 붙여넣음. 무엇을 어디서 복사했는지는 이 기록만으로 알 수 없음.",
+            alternatives=["자신이 직접 작성한 짧은 문장·AI 응답 일부를 다시 붙여넣었을 가능성",
+                          "paste 이벤트는 삽입·전송 성공을 보장하지 않음"],
+            gaps=["같은 시간대 Windows 클립보드 텔레메트리(복사 출처) 확보"],
             mitre=["T1567"],
         ))
 

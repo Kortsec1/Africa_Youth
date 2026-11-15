@@ -13,7 +13,7 @@ from ..schema import Action, AISession, Event
 
 USAGE_ROLES = {"chat", "upload", "api", "app", "local_app"}
 ANCHOR_ACTIONS = {Action.WEB_VISIT, Action.DNS_QUERY, Action.NET_CONNECT, Action.WINDOW_FOCUS,
-                  Action.PROCESS_START}
+                  Action.PROCESS_START, Action.WEB_PASTE}
 
 
 def annotate_focus(events: list[Event]) -> None:
@@ -36,7 +36,7 @@ def channel_of(e: Event, cat: Catalog) -> str:
         return "local_llm"
     if e.ai_role == "app":
         return "desktop_app"
-    if e.source in ("ChromeHistory", "FirefoxHistory") or cat.is_browser(e.process):
+    if e.source in ("ChromeHistory", "FirefoxHistory", "ChromePaste") or cat.is_browser(e.process):
         return "browser"
     if e.ai_role == "api":
         return "api"

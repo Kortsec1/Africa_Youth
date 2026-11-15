@@ -6,7 +6,7 @@ import json
 from ..schema import Event
 from ..timeutil import fmt_kst, iso
 
-LANES = ["Agent", "ChromeHistory", "FirefoxHistory", "ChromeDownloads", "Sysmon", "DNSClient",
+LANES = ["Agent", "RealtimeCollector", "ChromePaste", "ChromeHistory", "FirefoxHistory", "ChromeDownloads", "Sysmon", "DNSClient",
          "LNK", "JumpList", "USN", "MFT"]
 
 
@@ -88,7 +88,7 @@ tr.hl td{background:rgba(214,137,16,.16)}tr.ai td:first-child{border-left:3px so
 const D=/*__DATA__*/null;
 const $=s=>document.querySelector(s);const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const SEV=["critical","high","medium","low","info"];const ACOL={file_open:"#16a085",file_create:"#27ae60",file_modify:"#8e44ad",file_delete:"#c0392b",file_rename:"#9b59b6",
-web_visit:"#2f5fd0",download:"#e67e22",process_start:"#34495e",net_connect:"#5d6d7e",dns_query:"#85929e",clipboard_change:"#d4ac0d",window_focus:"#1abc9c",file_dialog:"#e74c3c",file_access:"#aab7b8"};
+web_visit:"#2f5fd0",web_paste:"#c0392b",download:"#e67e22",process_start:"#34495e",net_connect:"#5d6d7e",dns_query:"#85929e",clipboard_change:"#d4ac0d",window_focus:"#1abc9c",file_dialog:"#e74c3c",file_access:"#aab7b8"};
 const evById=Object.fromEntries(D.events.map(e=>[e.id,e]));let hl=new Set();
 const t0=D.events.length?D.events[0].k:"",t1=D.events.length?D.events[D.events.length-1].k:"";
 $("#sub").textContent=`Host: ${D.host||"-"} · 분석 구간 ${t0} ~ ${t1} (KST)`;

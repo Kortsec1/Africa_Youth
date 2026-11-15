@@ -40,7 +40,9 @@ Windows Endpoint                      분석 PC (Python 3.11+, 외부 의존성 
 │   · 브라우저 History          │ 수집 │  catalog    AI 서비스·도메인 역할·민감 키워드 태깅    │
 │   · LECmd / JLECmd / MFTECmd  │ 폴더 │  correlate/ AI 세션 구성 → 탐지 규칙 9종            │
 │   · Sysmon·DNS 로그(JSONL)    │      │  report/    HTML 타임라인 · JSON · CSV · Markdown    │
-│  telemetry_agent.py (창·클립) │      └─────────────────────────────────────────────────────┘
+│  04 RealtimeCollector (C#)    │
+│  04 Chrome 붙여넣기 관측 확장  │
+│  telemetry_agent.py (보조)    │      └─────────────────────────────────────────────────────┘
 │  sysmon-shadowai.xml          │
 └──────────────────────────────┘
 ```
@@ -51,7 +53,9 @@ Windows Endpoint                      분석 PC (Python 3.11+, 외부 의존성 
 | LNK CSV / JumpList CSV | LECmd / JLECmd | 파일 열람 |
 | `History` / `places.sqlite` | Chrome·Edge·Whale / Firefox | 방문, 다운로드 |
 | Sysmon·DNS-Client (EvtxECmd CSV 또는 JSONL) | EvtxECmd / collect_artifacts.ps1 | 프로세스, DNS, 연결, 클립보드, 파일 생성·삭제 |
-| `agent.jsonl` | telemetry_agent.py | 창 포커스, 파일 대화상자, 클립보드 |
+| RealtimeCollector JSONL (schema v2) | [04 수집기](docs/research/04_endpoint-telemetry/poc/windows-collector/README.md) | 창 전환, 클립보드 변경, 프로세스 시작 |
+| `chrome-paste-*.jsonl` | [04 Chrome 붙여넣기 관측 확장](docs/research/04_endpoint-telemetry/tools/chrome-paste-observer/README.md) | AI 페이지 붙여넣기(paste_event) |
+| `agent.jsonl` | collector/telemetry_agent.py (보조: 창 클래스로 파일 선택창 식별) | 창 포커스, 파일 대화상자, 클립보드 |
 
 ## 빠른 실행
 
@@ -72,7 +76,7 @@ python -m pytest                                        # 회귀 테스트
 |---|---|---|---|
 | SAI-001 | AI 사용 세션 식별 (기준점) | SAI-006 | AI 생성물 실행 |
 | SAI-002 | 사용 전후 문서 열람 | SAI-007 | 비인가 AI 앱 / 로컬 LLM |
-| SAI-003 | 복사 → AI 창 전환 (붙여넣기 정황) | SAI-008 | 사용 전 압축(Staging) |
+| SAI-003 | 복사 → AI 창 전환 / 붙여넣기 관측 | SAI-008 | 사용 전 압축(Staging) |
 | SAI-004 | 브라우저 파일 선택 → 업로드 정황 | SAI-009 | 사용 후 흔적 삭제 |
 | SAI-005 | AI 생성물 다운로드 | | |
 
@@ -84,13 +88,15 @@ python -m pytest                                        # 회귀 테스트
 
 - [x] 분야별 기술 조사 (01~05 `README.md`)
 - [x] 정규화 스키마 · 파서 7종 · 상관분석 엔진 · HTML 리포트 PoC
-- [x] 실제 도구 출력 형식의 가상 시나리오로 엔진 검증 (회귀 테스트 16개)
+- [x] 실제 도구 출력 형식의 가상 시나리오로 엔진 검증 + 04 실측 증거 파싱 검증 (회귀 테스트 18개)
+- [x] 04 Endpoint Telemetry 실측 (수집기·Chrome 확장, [결과](docs/research/04_endpoint-telemetry/results.md)) → 엔진 연동, SAI-003 신뢰도 보정
 - [x] 수집 스크립트 · 텔레메트리 에이전트 · Sysmon 설정 초안
-- [ ] Windows VM 실측 실험 (02 W-1~8, 03 A-1~7, 04 T-1~5, 05 N-1~6) — 각 `results.md` 에 절차·기록 양식 준비됨
+- [ ] 실측 실험 (02 W-1~8, 03 A-1~7, 05 N-1~6) — 각 `results.md` 에 절차·기록 양식 준비됨
+- [ ] 04 미완료 항목(창·탭 횟수 대조, 파일·전송 통합 실험) — 04 results 참고
 - [ ] 실측 결과로 규칙 시간창·도메인 카탈로그 보정, ComDlg32(RECmd)·SRUM 파서 추가
 
 > ⚠ `samples/synthetic/` 은 **가상 데이터**입니다. 실험 결과로 인용하지 마세요.
-> `collector/` 스크립트는 아직 실제 Windows 에서 검증 전입니다.
+> `collector/` 의 PowerShell 수집 스크립트·Python 에이전트는 아직 실제 Windows 에서 검증 전입니다. 실측 검증된 수집기는 04 폴더의 RealtimeCollector 입니다.
 
 ## 디렉터리
 

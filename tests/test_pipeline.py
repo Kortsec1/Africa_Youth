@@ -94,8 +94,24 @@ def test_corporate_site_is_not_usage(result):
 # ---------------------------------------------------------------- 탐지 (정답)
 def test_clipboard_to_ai(result):
     f = by_rule(result, "SAI-003")
-    assert len(f) == 1                      # Agent + Sysmon EID24 는 하나로 병합
+    assert len(f) == 1                      # Agent + Sysmon EID24 + paste 는 하나로 병합
     assert f[0].severity == "high" and "excel" in f[0].facts[0].lower()
+    assert "붙여넣기 관측" in f[0].title and any("paste" in x for x in f[0].facts)
+    assert f[0].confidence >= 0.8           # paste_event 직접 근거로 상향
+
+
+def test_clipboard_without_paste_stays_low():
+    """04 실측: 복사→AI 창 전환만으로는 붙여넣기 구분 불가 → paste 근거 없으면 신뢰도 0.7 미만."""
+    from datetime import datetime, timedelta, timezone
+    from shadow_ai_forensics.correlate import analyze_events
+    from shadow_ai_forensics.schema import Action, Category, Event
+    t0 = datetime(2026, 11, 10, 5, 0, tzinfo=timezone.utc)
+    ev = [Event(ts=t0, source="Agent", category=Category.CLIPBOARD, action=Action.CLIPBOARD_CHANGE,
+                time_meaning="", host="H", process="notepad.exe", title="메모 - 메모장"),
+          Event(ts=t0 + timedelta(seconds=10), source="Agent", category=Category.WINDOW, action=Action.WINDOW_FOCUS,
+                time_meaning="", host="H", process="chrome.exe", title="ChatGPT - Chrome")]
+    f = [x for x in analyze_events(ev).findings if x.rule_id == "SAI-003"]
+    assert len(f) == 1 and f[0].confidence < 0.7 and "미확인" in f[0].title
 
 
 def test_notepad_copy_not_flagged(result):
@@ -163,3 +179,20 @@ def test_winevent_jsonl_from_collector(tmp_path):
     from shadow_ai_forensics.parsers.eventlog import parse_winevent_jsonl
     ev = parse_winevent_jsonl(p)
     assert len(ev) == 1 and ev[0].domain == "chatgpt.com" and ev[0].pid == 4120
+
+
+EVIDENCE = ROOT / "docs" / "research" / "04_endpoint-telemetry" / "evidence"
+
+
+@pytest.mark.skipif(not EVIDENCE.exists(), reason="04 실측 증거 없음")
+def test_real_04_evidence_parses():
+    """04 실측 공개 증거(projected JSONL)를 엔진이 읽는지 확인 — 가상 데이터가 아닌 실제 실험 기록."""
+    from shadow_ai_forensics.parsers import load_dir
+    from shadow_ai_forensics.schema import Action
+    events, inv = load_dir(EVIDENCE)
+    kinds = set(v.split()[0] for v in inv.values())
+    assert {"realtime_collector", "chrome_paste"} <= kinds
+    pastes = [e for e in events if e.action == Action.WEB_PASTE]
+    assert len(pastes) == 1 and pastes[0].domain == "chatgpt.com"     # 양성 1건, 음성 대조 0건
+    clips = [e for e in events if e.action == Action.CLIPBOARD_CHANGE and "six" in e.raw_ref]
+    assert len(clips) == 6                                              # 6회 복사 실험

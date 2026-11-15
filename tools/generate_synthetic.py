@@ -8,6 +8,7 @@
   - Chrome   : Chrome/History (SQLite)
   - EvtxECmd : sysmon_evtxecmd.csv
   - 에이전트  : agent.jsonl
+  - 04 Chrome 붙여넣기 관측 확장 : chrome-paste.jsonl
 
 ⚠ 이 데이터는 '가상'이다. 실험 결과(results.md)로 인용하지 말 것.
    실제 실험 데이터는 docs/research/*/samples 에 별도로 수집한다.
@@ -16,7 +17,7 @@
   [정상] 09:05 네이버 방문, 09:10 회의록 열람, 09:30 메모장 복사(이후 AI 사용 없음)
   [정상] 10:20 openai.com 뉴스 페이지 방문 (회사 홈페이지 → '사용'으로 보면 안 됨)
   [경미] 11:00 Claude 짧은 사용 (다른 행위와 연결 없음)
-  [사고] 13:40 고객DB 압축 → 13:52 재무제표 열람 → 14:01 엑셀에서 복사 → ChatGPT 전환
+  [사고] 13:40 고객DB 압축 → 13:52 재무제표 열람 → 14:01 엑셀에서 복사 → ChatGPT 전환 → 붙여넣기(paste_event)
          14:04 파일 선택창 → 압축파일 업로드 → 14:09 AI 생성 스크립트 다운로드 → 14:12 실행
          14:48~14:50 스크립트·압축파일 삭제
   [정책] 16:20 Ollama 실행, 16:30 LM Studio 모델(.gguf) 저장, 16:45 스크립트의 OpenAI API 호출
@@ -373,12 +374,33 @@ def write_agent(out: Path) -> None:
             f.write(json.dumps(r, ensure_ascii=False) + "\n")
 
 
+def write_chrome_paste(out: Path) -> None:
+    """04 Chrome 붙여넣기 관측 확장(chrome-paste-observer) 내보내기 형식."""
+    run = "5b0f6c1e-2d3a-4e8f-9a1b-7c6d5e4f3a2b"
+    doc = "a1b2c3d4-0000-4000-8000-000000000001"
+
+    def row(hms, typ, **kw):
+        return {"schema_version": 1, "document_id": doc, "type": typ,
+                "observed_at_utc": t(hms).isoformat().replace("+00:00", "Z"), "document_monotonic_ms": 0.0,
+                "origin": "https://chatgpt.com", **kw, "run_id": run, "tab_id": 1218}
+    rows = [{"type": "experiment_start", "run_id": run, "observed_at_utc": t("08:59:00").isoformat().replace("+00:00", "Z")},
+            row("14:01:21", "page_ready"),
+            row("14:01:31", "paste_event", trusted=True, target_tag="P", target_editable=True, payload_collected=False,
+                semantics="Paste event observed; does not prove content insertion, composer identity, or transmission."),
+            {"type": "experiment_stop", "run_id": run, "observed_at_utc": t("17:00:00").isoformat().replace("+00:00", "Z")}]
+    for i, r in enumerate(rows, start=1):
+        r.setdefault("event_id", i)
+    with open(out / "chrome-paste.jsonl", "w", encoding="utf-8") as f:
+        for r in rows:
+            f.write(json.dumps(r, ensure_ascii=False) + "\n")
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("-o", "--out", type=Path, default=Path("samples/synthetic/scenario01"))
     args = ap.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
-    for fn in (write_mft, write_usn, write_lnk, write_jumplist, write_chrome, write_sysmon, write_agent):
+    for fn in (write_mft, write_usn, write_lnk, write_jumplist, write_chrome, write_sysmon, write_agent, write_chrome_paste):
         fn(args.out)
     (args.out / "README.md").write_text(__doc__ or "", encoding="utf-8")
     print(f"[+] synthetic scenario written to {args.out}")

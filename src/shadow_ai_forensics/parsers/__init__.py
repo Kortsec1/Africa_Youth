@@ -6,7 +6,7 @@ import logging
 from pathlib import Path
 
 from ..schema import Event
-from . import agent, browser, eventlog, filesystem, shell
+from . import agent, browser, eventlog, filesystem, realtime, shell
 from .common import csv_header
 
 log = logging.getLogger(__name__)
@@ -38,6 +38,10 @@ def detect(path: Path) -> str | None:
             return None
         if agent.sniff_agent(first):
             return "agent"
+        if realtime.sniff_collector(first):
+            return "realtime_collector"
+        if realtime.sniff_paste(first):
+            return "chrome_paste"
         if eventlog.sniff_winevent_jsonl(first):
             return "winevent"
         return None
@@ -60,6 +64,8 @@ PARSERS = {
     "evtxecmd": eventlog.parse_evtxecmd,
     "winevent": eventlog.parse_winevent_jsonl,
     "agent": agent.parse_agent,
+    "realtime_collector": realtime.parse_collector,
+    "chrome_paste": realtime.parse_paste,
     "chromium": browser.parse_chromium,
     "firefox": browser.parse_firefox,
 }
