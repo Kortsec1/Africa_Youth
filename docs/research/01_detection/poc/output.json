@@ -1,0 +1,177 @@
+{
+  "synthetic": true,
+  "policy_version": "demo-v1",
+  "parameters": {
+    "window_seconds": 60,
+    "repeat_count": 3
+  },
+  "limitation": "가상 데이터 결과이며 질문 전송·파일 업로드·유출을 입증하지 않습니다.",
+  "timeline": [
+    "evt-001",
+    "evt-002",
+    "evt-003",
+    "evt-004"
+  ],
+  "events": [
+    {
+      "event_id": "evt-001",
+      "occurred_at": "2026-11-15T10:00:00+09:00",
+      "device_id": "PC-A",
+      "user_id": "USER-01",
+      "process_entity_id": "PC-A-PROC-001",
+      "event_type": "file_access",
+      "source": "synthetic_file_audit",
+      "source_ref": "synthetic:file-001",
+      "synthetic": true,
+      "attributes": {
+        "file_path": "C:\\ResearchTest\\sample.txt",
+        "access_kind": "read_data"
+      }
+    },
+    {
+      "event_id": "evt-002",
+      "occurred_at": "2026-11-15T10:00:20+09:00",
+      "device_id": "PC-B",
+      "user_id": "USER-02",
+      "process_entity_id": null,
+      "event_type": "ai_service_access",
+      "source": "synthetic_browser_history",
+      "source_ref": "synthetic:visit-002",
+      "synthetic": true,
+      "attributes": {
+        "service_id": "AI-DEMO",
+        "domain": "ai.example.com",
+        "observation_kind": "browser_visit"
+      }
+    },
+    {
+      "event_id": "evt-003",
+      "occurred_at": "2026-11-15T10:00:40+09:00",
+      "device_id": "PC-A",
+      "user_id": "USER-01",
+      "process_entity_id": null,
+      "event_type": "ai_service_access",
+      "source": "synthetic_browser_history",
+      "source_ref": "synthetic:visit-003",
+      "synthetic": true,
+      "attributes": {
+        "service_id": "AI-DEMO",
+        "domain": "ai.example.com",
+        "observation_kind": "browser_visit"
+      }
+    },
+    {
+      "event_id": "evt-004",
+      "occurred_at": "2026-11-15T10:00:50+09:00",
+      "device_id": "PC-A",
+      "user_id": null,
+      "process_entity_id": null,
+      "event_type": "ai_service_access",
+      "source": "synthetic_browser_history",
+      "source_ref": "synthetic:visit-004",
+      "synthetic": true,
+      "attributes": {
+        "service_id": "AI-DEMO",
+        "domain": "ai.example.com",
+        "observation_kind": "browser_visit"
+      }
+    }
+  ],
+  "alerts": [
+    {
+      "rule_id": "R01",
+      "category": "policy_review",
+      "assessment_level": "단일 기록",
+      "description": "미승인 서비스 방문 기록",
+      "evidence_ids": [
+        "evt-002"
+      ],
+      "observed_facts": [
+        {
+          "service_id": "AI-DEMO",
+          "domain": "ai.example.com",
+          "observation_kind": "browser_visit"
+        }
+      ],
+      "inference": null
+    },
+    {
+      "rule_id": "R01",
+      "category": "policy_review",
+      "assessment_level": "단일 기록",
+      "description": "미승인 서비스 방문 기록",
+      "evidence_ids": [
+        "evt-003"
+      ],
+      "observed_facts": [
+        {
+          "service_id": "AI-DEMO",
+          "domain": "ai.example.com",
+          "observation_kind": "browser_visit"
+        }
+      ],
+      "inference": null
+    },
+    {
+      "rule_id": "R02",
+      "category": "context_review",
+      "assessment_level": "상관 정황",
+      "description": "파일 읽기 후 미승인 서비스 방문",
+      "evidence_ids": [
+        "evt-001",
+        "evt-003"
+      ],
+      "observed_facts": [
+        {
+          "file_path": "C:\\ResearchTest\\sample.txt",
+          "access_kind": "read_data"
+        },
+        {
+          "service_id": "AI-DEMO",
+          "domain": "ai.example.com",
+          "observation_kind": "browser_visit"
+        }
+      ],
+      "inference": "두 행위가 관련되었을 가능성"
+    },
+    {
+      "rule_id": "R01",
+      "category": "policy_review",
+      "assessment_level": "단일 기록",
+      "description": "미승인 서비스 방문 기록",
+      "evidence_ids": [
+        "evt-004"
+      ],
+      "observed_facts": [
+        {
+          "service_id": "AI-DEMO",
+          "domain": "ai.example.com",
+          "observation_kind": "browser_visit"
+        }
+      ],
+      "inference": null
+    },
+    {
+      "rule_id": "R05",
+      "category": "insufficient_context",
+      "assessment_level": "판단 보류",
+      "description": "사용자 누락으로 행위 연결 불가",
+      "evidence_ids": [
+        "evt-001",
+        "evt-004"
+      ],
+      "observed_facts": [
+        {
+          "file_path": "C:\\ResearchTest\\sample.txt",
+          "access_kind": "read_data"
+        },
+        {
+          "service_id": "AI-DEMO",
+          "domain": "ai.example.com",
+          "observation_kind": "browser_visit"
+        }
+      ],
+      "inference": null
+    }
+  ]
+}
