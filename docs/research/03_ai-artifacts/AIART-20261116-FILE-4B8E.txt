@@ -1,0 +1,4 @@
+Synthetic forensic test document. No personal data.
+CONTENT_MARKER=AIART-20261116-CONTENT-6F1D
+VALUE_A=17
+VALUE_B=25

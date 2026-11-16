@@ -1,0 +1,18 @@
+{
+  "source_sha256": "adb42d2b488e09eeb6dba2de07ece14d7def087ec2db1c02a655e65d145b0fc7",
+  "full_screenshot_sha256": "5d225613d7711d4cb3911d879c17c7abc0740617a1bf31a854a50432a9abb1ae",
+  "crop_rectangle": [
+    0,
+    470,
+    580,
+    741
+  ],
+  "screenshot_kind": "actual 010 Editor screenshot, cropped only",
+  "crop_sha256": "3bcd970f3254508ff8855b96bc50bfc6aab8f0ef35561b37d0455002c7924aed",
+  "selected_bytes": 52,
+  "decoded_offset": 8902,
+  "source_block_offset": 19019,
+  "crc32c": "pass",
+  "synthetic": false,
+  "limitation": "Screenshot displays decoded block, not raw compressed SST bytes."
+}

@@ -1,0 +1,81 @@
+{
+  "collected_utc": "2026-11-16T11:07:31.845683+00:00",
+  "method": "best_effort_live_read_not_atomic_snapshot",
+  "profile": "Chrome Default candidate; active profile not independently verified",
+  "markers": [
+    "AIART-20261116-UNSENT-7D3F",
+    "AIART-20261116-SENT-9A2C",
+    "AIART-20261116-FILE-4B8E",
+    "AIART-20261116-CONTENT-6F1D"
+  ],
+  "hits": [
+    {
+      "path": "IndexedDB/https_chatgpt.com_0.indexeddb.leveldb/000107.log",
+      "marker": "AIART-20261116-UNSENT-7D3F",
+      "encoding": "utf-16-le",
+      "first_byte_offset": 3471428,
+      "count": 8,
+      "length": 3690463,
+      "sha256_at_read": "80a8e54e54634cd73ff0df4477291584fa00c57acb264b0bb9a716ab293130f3"
+    }
+  ],
+  "errors": [
+    {
+      "path": "Local Storage/leveldb/LOCK",
+      "error": "[Errno 13] Permission denied"
+    },
+    {
+      "path": "Session Storage/LOCK",
+      "error": "[Errno 13] Permission denied"
+    },
+    {
+      "path": "IndexedDB/chrome-extension_ajnnckikagphjbgpicpoffockabnhond_0.indexeddb.leveldb/LOCK",
+      "error": "[Errno 13] Permission denied"
+    },
+    {
+      "path": "IndexedDB/https_github.com_0.indexeddb.leveldb/LOCK",
+      "error": "[Errno 13] Permission denied"
+    },
+    {
+      "path": "IndexedDB/https_night-city-racing.game-files.crazygames.com_0.indexeddb.blob/1/00/2",
+      "error": "over_64MiB_limit"
+    },
+    {
+      "path": "Sessions/Session_13439299823404003",
+      "error": "[Errno 13] Permission denied: 'C:\\\\Users\\\\PC\\\\AppData\\\\Local\\\\Google\\\\Chrome\\\\User Data\\\\Default\\\\Sessions\\\\Session_13439299823404003'"
+    },
+    {
+      "path": "Sessions/Tabs_13439299823527073",
+      "error": "[Errno 13] Permission denied: 'C:\\\\Users\\\\PC\\\\AppData\\\\Local\\\\Google\\\\Chrome\\\\User Data\\\\Default\\\\Sessions\\\\Tabs_13439299823527073'"
+    },
+    {
+      "path": "Cache/Cache_Data/data_0",
+      "error": "[Errno 13] Permission denied: 'C:\\\\Users\\\\PC\\\\AppData\\\\Local\\\\Google\\\\Chrome\\\\User Data\\\\Default\\\\Cache\\\\Cache_Data\\\\data_0'"
+    },
+    {
+      "path": "Cache/Cache_Data/data_1",
+      "error": "[Errno 13] Permission denied: 'C:\\\\Users\\\\PC\\\\AppData\\\\Local\\\\Google\\\\Chrome\\\\User Data\\\\Default\\\\Cache\\\\Cache_Data\\\\data_1'"
+    },
+    {
+      "path": "Cache/Cache_Data/data_2",
+      "error": "[Errno 13] Permission denied: 'C:\\\\Users\\\\PC\\\\AppData\\\\Local\\\\Google\\\\Chrome\\\\User Data\\\\Default\\\\Cache\\\\Cache_Data\\\\data_2'"
+    },
+    {
+      "path": "Cache/Cache_Data/data_3",
+      "error": "[Errno 13] Permission denied: 'C:\\\\Users\\\\PC\\\\AppData\\\\Local\\\\Google\\\\Chrome\\\\User Data\\\\Default\\\\Cache\\\\Cache_Data\\\\data_3'"
+    },
+    {
+      "path": "Cache/Cache_Data/index",
+      "error": "[Errno 13] Permission denied: 'C:\\\\Users\\\\PC\\\\AppData\\\\Local\\\\Google\\\\Chrome\\\\User Data\\\\Default\\\\Cache\\\\Cache_Data\\\\index'"
+    },
+    {
+      "path": "Service Worker/Database/LOCK",
+      "error": "[Errno 13] Permission denied"
+    }
+  ],
+  "files_scanned": 11994,
+  "history": {
+    "status": "unavailable",
+    "error": "database is locked"
+  }
+}

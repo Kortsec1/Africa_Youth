@@ -1,0 +1,15 @@
+{
+  "dataset_type": "synthetic_only_not_browser_experiment",
+  "executed_utc": "2026-11-16T10:59:40.123511+00:00",
+  "sqlite_version": "3.50.4",
+  "checks": [
+    "exact_host_and_scheme_filter_6_visits",
+    "chromium_microseconds_1601_to_utc_and_repeated_visits",
+    "no_prompt_or_upload_inference",
+    "main_database_unchanged",
+    "committed_wal_visit_visible",
+    "corrupt_database_rejected"
+  ],
+  "passed": 6,
+  "status": "pass"
+}
