@@ -1,0 +1,29 @@
+{
+  "file": "000111.ldb",
+  "source_sha256": "adb42d2b488e09eeb6dba2de07ece14d7def087ec2db1c02a655e65d145b0fc7",
+  "source_length": 1941272,
+  "block_file_offset": 1212,
+  "block_compressed_length": 17802,
+  "compression_type": 1,
+  "decoded_block_offset": 10234,
+  "decoded_block_sha256": "a361082792cc4f1b3dbfa26bd66a54005066cb716b24d2eab371deb44095e6b4",
+  "marker": "AIART-20261116-SENT-9A2C",
+  "encoding": "utf-16-le",
+  "count_in_block": 2,
+  "exact_marker_hex": "41 00 49 00 41 00 52 00 54 00 2d 00 32 00 30 00 32 00 36 00 31 00 31 00 31 00 36 00 2d 00 53 00 45 00 4e 00 54 00 2d 00 39 00 41 00 32 00 43 00",
+  "block_crc32c": "verified",
+  "limitation": "Decoded block offset is not a source file offset. Key semantics not validated.",
+  "selected_bytes": 48,
+  "selected_end_offset": 10281,
+  "screenshot": "05-db-sent-hex-crop.png",
+  "full_screenshot_sha256": "3e9f163de5f70ab6d8c08f79509d018da8c34d001ef30530c69877934bdee1d9",
+  "crop_rectangle": [
+    0,
+    235,
+    580,
+    504
+  ],
+  "crop_sha256": "02c9612141b3575244aa37feecbf6b13426f5ceea273a7bfd0525e0ec5f7f089",
+  "screenshot_kind": "actual 010 Editor screenshot; crop only",
+  "response_evidence": "03-chatgpt-response.png shows response; this DB crop alone does not prove transmission or assistant-response storage"
+}

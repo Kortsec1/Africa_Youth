@@ -1,0 +1,77 @@
+[
+  {
+    "path": "000111-block-1212-sent-marker-excerpt.bin",
+    "sha256": "473bab3acdb042aa0576a47d6d633cb149177aecdc755346f3239e50da3f79d5",
+    "bytes": 48
+  },
+  {
+    "path": "000111-block-19019-marker-excerpt.bin",
+    "sha256": "1eacdd99e39c83979bd2b22a9305c05b326b03be6d640d592c1487a4e15f9617",
+    "bytes": 52
+  },
+  {
+    "path": "01-before.json",
+    "sha256": "d818a7cd093c9833b01933f1b234c943d85c9b8404ffecc7b3b17b48af5174b1",
+    "bytes": 3026
+  },
+  {
+    "path": "02-unsent.json",
+    "sha256": "abd84777f215ccb526ff0c1d2c8e3f2ca8b21aaf463876f53718438adf7812cf",
+    "bytes": 3209
+  },
+  {
+    "path": "03-sent.json",
+    "sha256": "cdaa43d2f26a5c00c0e12fbedb82671588d120a3af5c69d3ccdbead90e822f50",
+    "bytes": 3370
+  },
+  {
+    "path": "db-screenshot-provenance.json",
+    "sha256": "1bb392a4a114f1e1a0d17285cefa2b4bd2ebf4b45f3016601641e8e44a69e965",
+    "bytes": 624
+  },
+  {
+    "path": "db-sent-screenshot-provenance.json",
+    "sha256": "6ddd6120fd52057f6bf61f69c066e7e78d0b1a99a0c771f939d0d2033af9a3fa",
+    "bytes": 1322
+  },
+  {
+    "path": "README.md",
+    "sha256": "e553058979b2f0ac223cce503418ad71ce34f6c427868b8f3f33218f50357e36",
+    "bytes": 6832
+  },
+  {
+    "path": "sst-marker-verification.json",
+    "sha256": "4f77ab868cee0d71cf55af4b77e97074f7e8a2d0d426ae5bc45a3ee889b0a790",
+    "bytes": 17794
+  },
+  {
+    "path": "screenshots/01-chatgpt-before.png",
+    "sha256": "9f3f62afe34cde55d4b76da9ac708d4626ef8202534170bdb85d9ea93918a9af",
+    "bytes": 69258
+  },
+  {
+    "path": "screenshots/02-chatgpt-unsent.png",
+    "sha256": "e2416df4dceae03aa316e1ff6021ccf8963005e77f881a4ee9b30e0bd75d04f0",
+    "bytes": 69643
+  },
+  {
+    "path": "screenshots/03-chatgpt-response.png",
+    "sha256": "9546f102d744a0620a49fa7a4248e4cb6e89578f85144a82d49e26095227f272",
+    "bytes": 60120
+  },
+  {
+    "path": "screenshots/04-db-unsent-hex-crop.png",
+    "sha256": "3bcd970f3254508ff8855b96bc50bfc6aab8f0ef35561b37d0455002c7924aed",
+    "bytes": 261947
+  },
+  {
+    "path": "screenshots/05-db-sent-hex-crop.png",
+    "sha256": "02c9612141b3575244aa37feecbf6b13426f5ceea273a7bfd0525e0ec5f7f089",
+    "bytes": 304671
+  },
+  {
+    "path": "test-input/AIART-20261116-FILE-4B8E.txt",
+    "sha256": "4ca94e47b0fbcfd1498474564a9bdd33a207b21f861c858b69802ed51d9aefda",
+    "bytes": 121
+  }
+]
