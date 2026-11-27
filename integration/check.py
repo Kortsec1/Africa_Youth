@@ -20,7 +20,7 @@ for path in (research / '04_endpoint-telemetry/evidence').glob('*.projected.json
 assert sorted(counts.values()) == [2, 2, 3, 4, 7]
 process = research / '04_endpoint-telemetry/evidence/process-test.projected.jsonl'
 rows = load_events(process.read_bytes(), process.name, 'observed')
-assert rows[0]['event_time'].startswith('2026-10-26T15:53:10')
+assert rows[0]['event_time'] == '2026-10-26T15:53:10.567614+00:00'
 assert rows[0]['data_origin'] == 'observed'
 assert rows[0]['attributes']['data']['instance_identity_verified'] is False
 try:
@@ -32,6 +32,11 @@ else:
 assert load_events(b'', 'empty.jsonl') == []
 fixture = [{'type': 'paste_event', 'observed_at_utc': '2026-11-27T12:00:00', 'origin': 'https://chatgpt.com'}]
 assert load_events(json.dumps(fixture).encode(), 'test.json')[0]['event_time'] is None
+for fraction in ('4', '40', '400', '4000', '40000', '400000', '4000000'):
+    fixture[0]['observed_at_utc'] = '2026-10-26T23:42:02.' + fraction + '+09:00'
+    converted = load_events(json.dumps(fixture).encode(), 'test.json')[0]
+    assert converted['event_time'] == '2026-10-26T14:42:02.400000+00:00'
+    assert converted['attributes']['observed_at_utc'] == fixture[0]['observed_at_utc']
 result = run_demo()
 assert Counter(a['rule_id'] for a in result['alerts']) == {'R01': 3, 'R02': 1, 'R05': 1}
 expected = json.loads((research / '01_detection/poc/output.json').read_text())

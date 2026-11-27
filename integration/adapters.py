@@ -70,7 +70,14 @@ def load_events(raw, filename, origin='unknown'):
         normalized_time = None
         if stamp is not None:
             try:
-                value = datetime.fromisoformat(stamp.replace('Z', '+00:00'))
+                # Python 3.10은 소수 초 3/6자리만 허용한다.
+                # 원문은 attributes에 남기고 파싱할 값만 6자리로 맞춘다.
+                parse_stamp = re.sub(
+                    r'(\d{2}:\d{2}:\d{2})\.(\d+)',
+                    lambda m: m[1] + '.' + m[2][:6].ljust(6, '0'),
+                    stamp.replace('Z', '+00:00'),
+                )
+                value = datetime.fromisoformat(parse_stamp)
                 if value.utcoffset() is None:
                     raise ValueError('시간대 없음')
                 normalized_time = value.astimezone(timezone.utc).isoformat(timespec='microseconds')
