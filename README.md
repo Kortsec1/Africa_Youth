@@ -65,3 +65,11 @@ Windows Endpoint
 ## Endpoint Telemetry 조사·PoC 결과
 
 [Windows 실시간 사용자 행동 수집](docs/research/04_endpoint-telemetry/README.md)에 조사, 학생용 보고서, PoC 코드와 공유용 실험 증거를 정리했습니다. 기본 기능 검증 단계이며 전체 유출 탐지 구현 완료를 의미하지 않습니다.
+
+## 통합 연구 결과 및 시연
+
+- [최종 연구 보고서](docs/final-report.md): 분야별 결과, 프로그램 검증과 연구 한계
+- [통합 상세 문서](docs/integration.md): 데이터 형식과 기능 선정 근거
+- [시연 프로그램 실행 안내](integration/README.md): 기존 자료 Timeline과 합성 규칙 시연
+
+시연 프로그램은 연구 자료 조회용입니다. 실제 질문 전송이나 파일 업로드를 자동 탐지하는 기능은 포함하지 않습니다.
