@@ -26,7 +26,6 @@ DNS 및 네트워크 연결 정보를 활용해 생성형 AI 서비스 접근을
 | ChatGPT | chatgpt.com, openai.com | `chatgpt.com`을 최초 시험의 DNS 캐시에서 1회 관측. 연결 IP는 Cloudflare 계열로 보임(추정) | 공용 CDN 대역을 일반 사이트와 공유 |
 | Claude | claude.ai, anthropic.com | 미수행 | |
 | Gemini | gemini.google.com | 미수행 | Google 공용 인프라와 IP·도메인을 공유할 가능성 |
-| Copilot | copilot.microsoft.com | 미수행 | Windows·Edge 백그라운드 접속 가능성 |
 | 기타 | perplexity.ai 등 | 미수행 | |
 
 - 한 서비스가 웹, API, 정적 자원, 인증에 서로 다른 도메인을 쓸 수 있다. 이번 실험에서 DNS 캐시에 남은 것은 `chatgpt.com` 하나였고, 다른 도메인은 확인하지 못했다.
