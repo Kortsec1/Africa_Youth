@@ -16,3 +16,6 @@
 **/validation/*probe*.txt
 **/validation/*result*.json
 .vs/
+.venv/
+__pycache__/
+*.py[cod]
