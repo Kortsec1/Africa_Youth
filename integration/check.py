@@ -1,10 +1,12 @@
 """마지막 기능 확인: python integration/check.py"""
 from collections import Counter
+from datetime import datetime, timezone
 from pathlib import Path
 import json
 from streamlit.testing.v1 import AppTest
 from adapters import load_events
 from analysis import ROOT, run_demo
+from live import browser_rows
 
 research = ROOT / 'docs/research'
 metadata = research / '02_windows-forensics/samples/observations.json'
@@ -42,6 +44,18 @@ assert Counter(a['rule_id'] for a in result['alerts']) == {'R01': 3, 'R02': 1, '
 expected = json.loads((research / '01_detection/poc/output.json').read_text(encoding='utf-8'))
 assert result == expected
 
+started = datetime(2026, 10, 26, 14, 42, tzinfo=timezone.utc)
+ended = started.replace(minute=43)
+paste = {
+    'type': 'paste_event', 'run_id': 'check-run', 'origin': 'https://chatgpt.com',
+    'observed_at_utc': '2026-10-26T14:42:50.823Z', 'trusted': True,
+    'target_editable': True, 'payload_collected': False,
+}
+variants = [paste, {**paste, 'trusted': False}, {**paste, 'target_editable': False},
+            {**paste, 'observed_at_utc': '2026-10-26T14:41:50Z'}]
+paste_log = '\n'.join(map(json.dumps, variants)).encode('utf-8')
+assert len(browser_rows(paste_log, 'chrome.jsonl', started, ended)) == 1
+
 app = AppTest.from_file(str(Path(__file__).with_name('app.py')), default_timeout=30).run()
 assert not app.exception
 app.radio[0].set_value('기존 연구 자료').run()
@@ -58,5 +72,5 @@ for seconds in (30, 60, 300):
     app.selectbox[0].set_value(seconds).run()
     assert not app.exception
     assert len(app.dataframe) == 1
-print('PASS: 기존 자료 6종, UTC 변환, 누락값, 출처, 오류/빈 입력, 규칙 결과, 화면 메뉴·시간 범위')
+print('PASS: 기존 자료 6종, UTC 변환, 누락값, 출처, 오류/빈 입력, Chrome 로그 연결, 규칙 결과, 화면 메뉴·시간 범위')
 print('공유 로그 행 수:', counts)

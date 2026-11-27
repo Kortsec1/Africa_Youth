@@ -28,6 +28,15 @@ Windows에서는 활성화 명령을 `.venv\Scripts\Activate.ps1`로 바꾼다.
 
 ## 확인 결과
 
+### 같은 Windows PC에서 Shadow AI 사용 정황 보기
+
+1. [기존 Chrome 관측 확장](../docs/research/04_endpoint-telemetry/tools/chrome-paste-observer/README.md)을 실험용 프로필에 로드한다. 앱의 **내 PC 실시간**과 확장의 실험을 시작한 뒤 ChatGPT 페이지를 새로고침한다.
+2. 더미 텍스트를 복사하고 ChatGPT 페이지에 붙여넣는다. 더미 텍스트 전송은 이 실험에 필요하지 않다.
+3. 확장에서 관찰을 중지하고 JSONL을 저장한다. 앱에서도 관찰을 중지한 뒤 **ChatGPT 붙여넣기 로그 연결**에서 해당 JSONL을 선택한다. 한 번의 Chrome 실험에서 Windows 관찰 시간 안에 발생한 편집 가능 요소의 붙여넣기가 같은 시간표에 표시된다.
+
+Windows 파일 메타데이터와 프로세스 기록은 조사 맥락을 제공한다. Chrome 붙여넣기, 브라우저 History·저장소, DNS/TCP 관측은 각각 별개의 증거다. History와 DNS/TCP 파일은 기존 연구 자료에서 개별 조회할 수 있다. 기존 연구의 서로 다른 실험 로그는 현재 관찰과 자동으로 연결하지 않는다. 파일 내용 일치, 전송·업로드 성공, 조직 정책 위반 여부는 이 시간표에서 판정하지 않는다. R01~R05는 기존 합성 시연에서 실행한다.
+
+
 2026-11-27, Python 3.14.6 / Streamlit 1.67.0에서 `python integration/check.py` 실행 통과.
 
 기존 자료 6종, UTC 변환, 누락값·출처 보존, 잘못된 JSON·빈 입력 처리를 확인했다. Streamlit AppTest로 자료 메뉴와 합성 시연의 30/60/300초 선택을 확인했다. 기본 60초 결과는 기존 `output.json`과 일치했다(R01 3건, R02 1건, R05 1건).
