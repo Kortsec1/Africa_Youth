@@ -44,13 +44,15 @@ assert result == expected
 
 app = AppTest.from_file(str(Path(__file__).with_name('app.py')), default_timeout=30).run()
 assert not app.exception
-for label in app.sidebar.selectbox[0].options[:-1]:
-    app.sidebar.selectbox[0].select(label).run()
+app.radio[0].set_value('기존 연구 자료').run()
+assert not app.exception
+for label in app.selectbox[0].options[:-1]:
+    app.selectbox[0].select(label).run()
     assert not app.exception, label
     assert len(app.dataframe) >= 1, label
-app.sidebar.selectbox[0].select('내 JSON/JSONL 불러오기').run()
+app.selectbox[0].select('내 JSON/JSONL 불러오기').run()
 assert not app.exception
-app.sidebar.radio[0].set_value('합성 규칙 시연').run()
+app.radio[0].set_value('합성 규칙 시연').run()
 assert not app.exception
 for seconds in (30, 60, 300):
     app.selectbox[0].set_value(seconds).run()
