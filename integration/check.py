@@ -39,7 +39,7 @@ for fraction in ('4', '40', '400', '4000', '40000', '400000', '4000000'):
     assert converted['attributes']['observed_at_utc'] == fixture[0]['observed_at_utc']
 result = run_demo()
 assert Counter(a['rule_id'] for a in result['alerts']) == {'R01': 3, 'R02': 1, 'R05': 1}
-expected = json.loads((research / '01_detection/poc/output.json').read_text())
+expected = json.loads((research / '01_detection/poc/output.json').read_text(encoding='utf-8'))
 assert result == expected
 
 app = AppTest.from_file(str(Path(__file__).with_name('app.py')), default_timeout=30).run()
