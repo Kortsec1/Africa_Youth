@@ -85,6 +85,17 @@ def evidence_row(event):
     }
 
 
+def evidence_area(event):
+    source = event['source']
+    if source == 'file_metadata' or event['event_type'] == 'file_metadata_observation':
+        return 'Windows 파일'
+    if source == 'browser_history':
+        return 'AI 브라우저 방문'
+    if source in ('dns_cache', 'tcp_conn', 'collector'):
+        return '네트워크'
+    return '엔드포인트 · Chrome'
+
+
 def show_detection():
     st.subheader('Shadow AI 의심 동작 탐지')
     st.write('같은 테스트에서 수집한 로그를 모아 미승인 AI 방문과 붙여넣기 정황을 확인합니다.')
@@ -122,6 +133,27 @@ def show_detection():
             st.write(signal)
             st.table([evidence_row(event) for event in evidence])
     st.caption('Clipboard 연결은 시각상 인접한 기록입니다. 내용 일치, 전송·업로드 성공은 이 자료로 판정할 수 없습니다.')
+    with st.expander('연구별 증거 현황'):
+        areas = ['Windows 파일', 'AI 브라우저 방문', '엔드포인트 · Chrome', '네트워크']
+        counts = {area: 0 for area in areas}
+        for event in ordered:
+            if event['event_type'] not in (
+                'collector_status', 'collector_error', 'experiment_start', 'experiment_stop', 'page_ready',
+            ):
+                counts[evidence_area(event)] += 1
+        st.table([{'연구': '탐지 · 상관분석', '현재 자료': f'정황 {len(findings)}건'}] + [
+            {'연구': area, '현재 자료': f'관측 {counts[area]}건' if counts[area] else '관측 자료 없음'}
+            for area in areas
+        ])
+    with st.expander('수동 확인한 AI 아티팩트'):
+        marker = st.selectbox('브라우저 저장소의 테스트 마커', ['미확인', '관측됨', '관측되지 않음'])
+        response = st.selectbox('실제 서비스 화면', ['미확인', '붙여넣기만 확인', '더미 메시지와 응답 확인'])
+        if marker != '미확인' or response != '미확인':
+            st.table([
+                {'근거': '저장소 마커', '수동 확인': marker},
+                {'근거': '서비스 화면', '수동 확인': response},
+            ])
+        st.caption('수동 확인은 자동 탐지 건수에 포함하지 않습니다. 저장소 마커만으로 전송 성공을 판단할 수 없습니다.')
     st.subheader('전체 증거')
     if ordered:
         st.dataframe([evidence_row(event) for event in ordered], hide_index=True, width='stretch')
