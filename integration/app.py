@@ -4,6 +4,7 @@ from pathlib import Path
 import streamlit as st
 from adapters import load_events
 from analysis import ROOT, run_demo
+from detection import show_detection
 from live import show_live
 
 st.set_page_config(page_title='Shadow AI 연구 기록', layout='wide')
@@ -18,13 +19,15 @@ samples = {
     '웹 Paste — 붙여넣기': research / '04_endpoint-telemetry/evidence/web-paste-positive.projected.jsonl',
     '웹 Paste — 클릭만': research / '04_endpoint-telemetry/evidence/web-paste-negative.projected.jsonl',
 }
-mode = st.radio('보기', ['내 PC 실시간', '기존 연구 자료', '합성 규칙 시연'],
+mode = st.radio('보기', ['의심 동작 탐지', '내 PC 실시간', '기존 연구 자료', '합성 규칙 시연'],
                 horizontal=True, label_visibility='collapsed')
 if mode != '내 PC 실시간' and st.session_state.get('live_running', False):
     st.session_state.live_ended = datetime.now(timezone.utc)
     st.session_state.live_running = False
 
-if mode == '내 PC 실시간':
+if mode == '의심 동작 탐지':
+    show_detection()
+elif mode == '내 PC 실시간':
     show_live()
 elif mode == '합성 규칙 시연':
     st.subheader('기존 상관분석 규칙')
