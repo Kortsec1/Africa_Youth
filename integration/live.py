@@ -2,13 +2,14 @@
 
 import csv
 import ctypes
-from datetime import datetime
+from datetime import datetime, timezone
 import os
 from pathlib import Path
 import re
 import subprocess
 
 import streamlit as st
+from adapters import load_events
 
 
 def local_time(timestamp=None):
@@ -41,7 +42,7 @@ def snapshot(name, file):
 
 
 def changes(before, after, name, file):
-    now = local_time()
+    now = datetime.now(timezone.utc).isoformat()
     old_clip, old_pids, old_file = before
     clip, pids, metadata = after
     rows = []
@@ -61,8 +62,30 @@ def changes(before, after, name, file):
     return [{'관찰 시각': time, '종류': kind, '기록': detail} for time, kind, detail in rows]
 
 
+def browser_rows(raw, filename, started, ended):
+    events = load_events(raw, filename, 'observed')
+    run_ids = {event['attributes'].get('run_id') for event in events}
+    if len(run_ids) != 1 or not all(isinstance(run, str) and run for run in run_ids):
+        raise ValueError('Expected one Chrome experiment')
+    rows = []
+    for event in events:
+        data = event['attributes']
+        time = event['event_time']
+        if (
+            event['event_type'] == 'paste_event'
+            and data.get('origin') == 'https://chatgpt.com'
+            and data.get('trusted') is True
+            and data.get('target_editable') is True
+            and data.get('payload_collected') is False
+            and time and started <= datetime.fromisoformat(time) <= ended
+        ):
+            rows.append({'관찰 시각': time, '종류': 'Chrome · ChatGPT',
+                         '기록': '편집 가능한 요소에서 붙여넣기 관측'})
+    return rows
+
+
 def show_live():
-    st.subheader('내 PC 실시간 기록')
+    st.subheader('Shadow AI 관찰')
     if os.name != 'nt':
         st.info('실시간 기록은 Windows에서 사용할 수 있습니다.')
         return
@@ -72,7 +95,7 @@ def show_live():
 
     state = st.session_state
     running = state.get('live_running', False)
-    st.write('관찰을 시작한 뒤 텍스트를 복사하거나, 지정한 프로그램을 열고 닫거나, 테스트 파일을 저장해 보세요.')
+    st.write('Windows 관찰을 시작하고, Chrome 확장에서 기록한 ChatGPT 붙여넣기 로그를 같은 시간표에 표시하세요.')
     with st.expander('관찰 대상', expanded=not running):
         name = st.text_input('프로세스 이름', 'notepad.exe', disabled=running).strip()
         path = st.text_input('테스트 파일 경로 (선택)', placeholder=r'C:\Temp\test.txt', disabled=running).strip()
@@ -80,6 +103,7 @@ def show_live():
 
     if running:
         if st.button('관찰 중지'):
+            state.live_ended = datetime.now(timezone.utc)
             state.live_running = False
             st.rerun()
         st.success('관찰 중')
@@ -96,6 +120,9 @@ def show_live():
                 st.error(f'관찰을 시작하지 못했습니다. ({type(error).__name__})')
             else:
                 state.live_target = name, file
+                state.live_started = datetime.now(timezone.utc)
+                state.live_ended = None
+                state.live_run = state.get('live_run', 0) + 1
                 state.live_running = True
                 state.live_rows = []
                 st.rerun()
@@ -112,10 +139,32 @@ def show_live():
                 new = changes(state.live_previous, current, name, file)
                 state.live_previous = current
                 state.live_rows = (new[::-1] + state.live_rows)[:100]
-        rows = state.get('live_rows', [])
+        rows = sorted(state.get('live_rows', []) + imported,
+                      key=lambda row: datetime.fromisoformat(row['관찰 시각']), reverse=True)
         if rows:
-            st.dataframe(rows, hide_index=True, width='stretch')
+            visible = [
+                {**row, '관찰 시각': datetime.fromisoformat(row['관찰 시각']).astimezone().isoformat(timespec='seconds')}
+                for row in rows
+            ]
+            st.dataframe(visible, hide_index=True, width='stretch')
         else:
             st.info('아직 관찰된 변경이 없습니다.')
 
-    timeline()
+    imported = []
+    if 'live_started' in state:
+        timeline_slot = st.container()
+        with st.expander('ChatGPT 붙여넣기 로그 연결'):
+            st.write('같은 테스트에서 Chrome 확장의 관찰을 시작한 뒤, 중지하고 저장한 JSONL 파일을 선택하세요.')
+            uploaded = st.file_uploader('Chrome 확장 JSONL', type=['jsonl'], key=f"paste_log_{state.live_run}")
+            if uploaded:
+                ended = state.live_ended or datetime.now(timezone.utc)
+                try:
+                    imported = browser_rows(uploaded.getvalue(), uploaded.name, state.live_started, ended)
+                except (ValueError, UnicodeError, TypeError):
+                    st.error('Chrome 확장의 JSONL 파일을 읽지 못했습니다.')
+                else:
+                    st.caption(f'관찰 시간에 포함된 붙여넣기 {len(imported)}건. 같은 내용의 복사나 전송 여부는 이 기록으로 확인할 수 없습니다.')
+        with timeline_slot:
+            timeline()
+    else:
+        timeline()

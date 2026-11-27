@@ -1,4 +1,5 @@
 """실행: streamlit run integration/app.py"""
+from datetime import datetime, timezone
 from pathlib import Path
 import streamlit as st
 from adapters import load_events
@@ -19,7 +20,8 @@ samples = {
 }
 mode = st.radio('보기', ['내 PC 실시간', '기존 연구 자료', '합성 규칙 시연'],
                 horizontal=True, label_visibility='collapsed')
-if mode != '내 PC 실시간':
+if mode != '내 PC 실시간' and st.session_state.get('live_running', False):
+    st.session_state.live_ended = datetime.now(timezone.utc)
     st.session_state.live_running = False
 
 if mode == '내 PC 실시간':
