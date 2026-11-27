@@ -3,6 +3,7 @@
 import csv
 import ctypes
 from datetime import datetime, timezone
+import json
 import os
 from pathlib import Path
 import re
@@ -166,5 +167,16 @@ def show_live():
                     st.caption(f'관찰 시간에 포함된 붙여넣기 {len(imported)}건. 같은 내용의 복사나 전송 여부는 이 기록으로 확인할 수 없습니다.')
         with timeline_slot:
             timeline()
+        if not running and state.get('live_rows'):
+            kinds = {'Clipboard': 'clipboard_update', '프로세스': 'process_observation',
+                     '파일': 'file_metadata_observation'}
+            export = [
+                {'type': kinds[row['종류']], 'observed_at_utc': row['관찰 시각'],
+                 'run_id': state.live_started.isoformat()}
+                for row in reversed(state.live_rows)
+            ]
+            st.download_button('Windows 관찰 JSONL 저장',
+                               '\n'.join(json.dumps(row) for row in export),
+                               file_name='windows-observation.jsonl', mime='application/x-ndjson')
     else:
         timeline()
