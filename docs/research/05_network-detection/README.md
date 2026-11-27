@@ -1,6 +1,6 @@
 # Network Detection: 네트워크 기반 AI 사용 탐지
 
-담당: 채원 / 저장소 정리: 2026-11-27
+담당: 이채원 
 
 ## 1. 연구 목표
 
@@ -61,15 +61,6 @@ DNS 및 네트워크 연결 정보를 활용해 생성형 AI 서비스 접근을
 - [PoC 코드](poc/): `collect_network.ps1`(DNS 캐시·TCP 연결 수집), `export_dns_log.ps1`(DNS-Client 로그 내보내기, 선택·미사용)
 - [실험 절차서](protocol.md): 시나리오와 실행 순서
 
-### 다른 담당과의 연동 계획
-
-| 담당 | 연동 내용 |
-|---|---|
-| 04 동훈 | `process_start` 이벤트와 PID·시각으로 연결해 "어떤 프로세스가 어떤 AI 후보 IP에 접속했는가"를 구성 |
-| 03 현서 | 브라우저 방문 기록과 연결 시각을 대조해 도메인 근거를 보강 (DNS 캐시에서 도메인이 안 나오는 문제 보완) |
-| 01 찬웅 | 타임라인·상관분석 입력 필드 형식 합의 |
-
-PoC 출력은 JSONL이며 `schema_version`, `source`, `observed_at`, `domain`, `pid`, `process_name`, `remote_ip`, `remote_port`, `domain_from_dns_cache`, `matched_ai`, `evidence_level` 필드를 쓴다. 필드는 01번과 합의되면 맞춘다. IP 목록 매칭은 실험 후 분석 명령으로 수행했고 PoC 본체에는 아직 포함하지 않았다.
 
 ## 4. 진행 현황
 
